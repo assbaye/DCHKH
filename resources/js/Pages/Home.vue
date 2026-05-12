@@ -11,7 +11,6 @@
         <h1 class="text-3xl md:text-4xl font-bold mb-2">Daaray Cheikhoul Khadim</h1>
         <h2 class="text-xl md:text-2xl font-semibold text-[#c9973a] mb-2">Touba Diellerlou Sylla</h2>
         <p class="text-blue-200 text-sm mb-2">دائرة الشيخ الخديم · Louga, Sénégal</p>
-        <p class="text-blue-300 italic text-sm mb-8">"Kër Serigne Touba bi"</p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
           <Link :href="route('register')" class="bg-[#c9973a] hover:bg-yellow-600 text-white font-semibold px-8 py-3 rounded-lg transition">
             Rejoindre le Dahira

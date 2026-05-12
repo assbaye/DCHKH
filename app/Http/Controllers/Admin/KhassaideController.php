@@ -25,10 +25,11 @@ class KhassaideController extends Controller
         $data = $request->validate([
             'titre'         => 'required|string|max:255',
             'auteur'        => 'required|string|max:255',
+            'interprete'    => 'nullable|string|max:255',
             'description'   => 'nullable|string',
             'paroles'       => 'nullable|string',
             'langue'        => 'required|in:arabe,wolof,français,autre',
-            'fichier_audio' => 'nullable|file|mimes:mp3,wav,ogg|max:20480',
+            'fichier_audio' => 'nullable|file|mimes:mp3,wav,ogg,m4a|max:51200',
             'telechargeable'=> 'boolean',
             'publie'        => 'boolean',
         ]);
@@ -52,10 +53,11 @@ class KhassaideController extends Controller
         $data = $request->validate([
             'titre'         => 'required|string|max:255',
             'auteur'        => 'required|string|max:255',
+            'interprete'    => 'nullable|string|max:255',
             'description'   => 'nullable|string',
             'paroles'       => 'nullable|string',
             'langue'        => 'required|in:arabe,wolof,français,autre',
-            'fichier_audio' => 'nullable|file|mimes:mp3,wav,ogg|max:20480',
+            'fichier_audio' => 'nullable|file|mimes:mp3,wav,ogg,m4a|max:51200',
             'telechargeable'=> 'boolean',
             'publie'        => 'boolean',
         ]);

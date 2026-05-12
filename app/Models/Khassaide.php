@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Khassaide extends Model
 {
     protected $fillable = [
-        'titre', 'auteur', 'description', 'paroles',
+        'titre', 'auteur', 'interprete', 'description', 'paroles',
         'fichier_audio', 'langue', 'telechargeable', 'publie', 'created_by',
     ];
 
