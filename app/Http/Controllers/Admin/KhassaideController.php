@@ -27,7 +27,7 @@ class KhassaideController extends Controller
             'auteur'        => 'required|string|max:255',
             'interprete'    => 'nullable|string|max:255',
             'description'   => 'nullable|string',
-            'fichier_audio' => 'nullable|file|mimes:mp3,wav,ogg,m4a|max:51200',
+            'fichier_audio' => 'nullable|file|mimes:mp3,wav,ogg,m4a|max:153600',
             'telechargeable'=> 'boolean',
             'publie'        => 'boolean',
         ]);
@@ -53,7 +53,7 @@ class KhassaideController extends Controller
             'auteur'        => 'required|string|max:255',
             'interprete'    => 'nullable|string|max:255',
             'description'   => 'nullable|string',
-            'fichier_audio' => 'nullable|file|mimes:mp3,wav,ogg,m4a|max:51200',
+            'fichier_audio' => 'nullable|file|mimes:mp3,wav,ogg,m4a|max:153600',
             'telechargeable'=> 'boolean',
             'publie'        => 'boolean',
         ]);
