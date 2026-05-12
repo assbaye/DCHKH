@@ -85,7 +85,7 @@
               <a
                 v-if="k.telechargeable && k.fichier_audio"
                 :href="`/storage/${k.fichier_audio}`"
-                download
+                :download="nomFichier(k)"
                 class="text-gray-400 hover:text-gray-600 transition"
                 title="Télécharger"
               >
@@ -252,6 +252,11 @@ function formatDuree(s) {
   const m = Math.floor(s / 60)
   const sec = Math.floor(s % 60).toString().padStart(2, '0')
   return `${m}:${sec}`
+}
+
+function nomFichier(k) {
+  const ext = k.fichier_audio.split('.').pop()
+  return `${k.titre}${k.interprete ? ' - ' + k.interprete : ''}.${ext}`
 }
 
 function langueCouleur(l) {

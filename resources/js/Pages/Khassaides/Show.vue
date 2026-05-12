@@ -39,7 +39,7 @@
         <a
           v-if="khassaide.telechargeable"
           :href="`/storage/${khassaide.fichier_audio}`"
-          download
+          :download="`${khassaide.titre}${khassaide.interprete ? ' - ' + khassaide.interprete : ''}.${khassaide.fichier_audio.split('.').pop()}`"
           class="mt-4 inline-flex items-center gap-2 text-sm text-[#0d2f6e] hover:underline font-medium"
         >
           <ArrowDownTrayIcon class="w-4 h-4" />
