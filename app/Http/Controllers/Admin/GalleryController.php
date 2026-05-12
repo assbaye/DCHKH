@@ -24,22 +24,39 @@ class GalleryController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
+            'type'      => 'required|in:photo,video',
+            'fichiers'  => 'nullable|array',
+            'fichiers.*'=> 'image|max:10240',
+            'url_video' => 'nullable|url',
             'titre'     => 'nullable|string|max:255',
             'description'=> 'nullable|string',
-            'type'      => 'required|in:photo,video',
-            'fichier'   => 'nullable|image|max:5120',
-            'url_video' => 'nullable|url',
             'album'     => 'nullable|string|max:100',
             'event_id'  => 'nullable|exists:events,id',
             'publie'    => 'boolean',
         ]);
-        if ($request->hasFile('fichier')) {
-            $data['fichier'] = $request->file('fichier')->store('gallery', 'public');
+
+        $base = [
+            'type'        => $request->type,
+            'titre'       => $request->titre,
+            'description' => $request->description,
+            'album'       => $request->album,
+            'event_id'    => $request->event_id ?: null,
+            'publie'      => $request->boolean('publie', true),
+            'created_by'  => auth()->id(),
+        ];
+
+        if ($request->type === 'video') {
+            GalleryItem::create(array_merge($base, ['url_video' => $request->url_video]));
+        } else {
+            foreach ($request->file('fichiers', []) as $fichier) {
+                GalleryItem::create(array_merge($base, [
+                    'fichier' => $fichier->store('gallery', 'public'),
+                ]));
+            }
         }
-        $data['created_by'] = auth()->id();
-        GalleryItem::create($data);
-        return redirect()->route('admin.galerie.index')->with('success', 'Élément ajouté à la galerie.');
+
+        return redirect()->route('admin.galerie.index')->with('success', 'Média(s) ajouté(s) à la galerie.');
     }
 
     public function show(string $id) {}
