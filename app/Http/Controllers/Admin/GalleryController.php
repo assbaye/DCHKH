@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\GalleryItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Laravel\Facades\Image;
 
 class GalleryController extends Controller
 {
@@ -50,9 +51,12 @@ class GalleryController extends Controller
             GalleryItem::create(array_merge($base, ['url_video' => $request->url_video]));
         } else {
             foreach ($request->file('fichiers', []) as $fichier) {
-                GalleryItem::create(array_merge($base, [
-                    'fichier' => $fichier->store('gallery', 'public'),
-                ]));
+                $path = 'gallery/' . uniqid() . '.jpg';
+                $image = Image::read($fichier)
+                    ->scaleDown(width: 1920, height: 1080)
+                    ->toJpeg(quality: 82);
+                Storage::disk('public')->put($path, $image);
+                GalleryItem::create(array_merge($base, ['fichier' => $path]));
             }
         }
 
@@ -79,9 +83,14 @@ class GalleryController extends Controller
             'event_id'  => 'nullable|exists:events,id',
             'publie'    => 'boolean',
         ]);
-        if ($request->hasFile('fichier')) {
+        if ($request->hasFile('fichiers')) {
             if ($galerie->fichier) Storage::disk('public')->delete($galerie->fichier);
-            $data['fichier'] = $request->file('fichier')->store('gallery', 'public');
+            $path = 'gallery/' . uniqid() . '.jpg';
+            $image = Image::read($request->file('fichiers')[0])
+                ->scaleDown(width: 1920, height: 1080)
+                ->toJpeg(quality: 82);
+            Storage::disk('public')->put($path, $image);
+            $data['fichier'] = $path;
         }
         $galerie->update($data);
         return redirect()->route('admin.galerie.index')->with('success', 'Élément mis à jour.');
