@@ -31,7 +31,7 @@
             </div>
             <div>
               <p class="text-sm font-medium text-gray-700">Fichier audio</p>
-              <p class="text-xs text-gray-400">MP3, WAV, OGG, M4A — max 50 Mo</p>
+              <p class="text-xs text-gray-400">MP3, WAV, OGG, M4A — max 150 Mo</p>
             </div>
           </div>
           <input
@@ -95,16 +95,20 @@ const form = useForm({
   auteur:         props.khassaide?.auteur ?? 'Cheikh Ahmadou Bamba',
   interprete:     props.khassaide?.interprete ?? '',
   description:    props.khassaide?.description ?? '',
-  paroles:        props.khassaide?.paroles ?? '',
-  langue:         props.khassaide?.langue ?? 'arabe',
   fichier_audio:  null,
   telechargeable: props.khassaide?.telechargeable ?? true,
   publie:         props.khassaide?.publie ?? true,
 })
 
 function soumettre() {
-  if (props.khassaide) form.post(route('admin.khassaides.update', props.khassaide.id), { method: 'put' })
-  else form.post(route('admin.khassaides.store'))
+  if (props.khassaide) {
+    form.post(route('admin.khassaides.update', props.khassaide.id), {
+      forceFormData: true,
+      _method: 'put',
+    })
+  } else {
+    form.post(route('admin.khassaides.store'), { forceFormData: true })
+  }
 }
 </script>
 
