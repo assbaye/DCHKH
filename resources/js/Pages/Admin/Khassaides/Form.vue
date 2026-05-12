@@ -88,7 +88,7 @@ import FormField from '@/Components/FormField.vue'
 import { Link, useForm } from '@inertiajs/vue3'
 import { CheckIcon, MusicalNoteIcon, SpeakerWaveIcon } from '@heroicons/vue/24/outline'
 
-const props = defineProps({ khassaide: Object, langues: Array })
+const props = defineProps({ khassaide: Object })
 
 const form = useForm({
   titre:          props.khassaide?.titre ?? '',

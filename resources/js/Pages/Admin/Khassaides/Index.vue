@@ -13,7 +13,7 @@
           <tr>
             <th class="text-left px-5 py-3">Titre</th>
             <th class="text-left px-5 py-3">Auteur</th>
-            <th class="text-left px-5 py-3">Langue</th>
+            <th class="text-left px-5 py-3">Interprète</th>
             <th class="text-center px-5 py-3">Audio</th>
             <th class="text-center px-5 py-3">Publié</th>
             <th class="text-right px-5 py-3">Actions</th>
@@ -23,9 +23,7 @@
           <tr v-for="k in khassaides.data" :key="k.id" class="hover:bg-gray-50 transition">
             <td class="px-5 py-4 font-medium text-gray-800">{{ k.titre }}</td>
             <td class="px-5 py-4 text-gray-500">{{ k.auteur }}</td>
-            <td class="px-5 py-4">
-              <span class="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-700 font-medium">{{ k.langue }}</span>
-            </td>
+            <td class="px-5 py-4 text-gray-500 text-xs">{{ k.interprete || '—' }}</td>
             <td class="px-5 py-4 text-center">
               <MusicalNoteIcon v-if="k.fichier_audio" class="w-5 h-5 text-green-500 mx-auto" />
               <span v-else class="text-gray-300 text-xs">—</span>
