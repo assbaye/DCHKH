@@ -63,12 +63,23 @@
       <h3 class="text-lg font-bold text-gray-700 mb-2">Tout est à jour !</h3>
       <p class="text-gray-400 text-sm">Aucune inscription en attente de validation.</p>
     </div>
+
+    <ConfirmModal
+      :show="confirmModal"
+      title="Rejeter l'inscription"
+      :message="`Êtes-vous sûr de vouloir rejeter et supprimer l'inscription de ${itemASupprimer?.name} ?`"
+      confirmLabel="Rejeter"
+      @confirm="confirmerRejet"
+      @cancel="confirmModal = false"
+    />
   </AdminLayout>
 </template>
 
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import ConfirmModal from '@/Components/ConfirmModal.vue'
 import { Link, router } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import { CheckCircleIcon, XCircleIcon, ClockIcon, ExclamationCircleIcon } from '@heroicons/vue/24/outline'
 
 defineProps({ en_attente: Array })
@@ -77,9 +88,11 @@ function formatDate(d) {
   return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
-function rejeter(user) {
-  if (confirm(`Rejeter et supprimer l'inscription de ${user.name} ?`)) {
-    router.delete(route('admin.inscriptions.rejeter', user.id))
-  }
+const confirmModal = ref(false)
+const itemASupprimer = ref(null)
+function rejeter(user) { itemASupprimer.value = user; confirmModal.value = true }
+function confirmerRejet() {
+  router.delete(route('admin.inscriptions.rejeter', itemASupprimer.value.id))
+  confirmModal.value = false
 }
 </script>

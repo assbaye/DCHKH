@@ -40,6 +40,13 @@
           </div>
         </div>
       </div>
+    <ConfirmModal
+      :show="confirmModal"
+      :message="`Êtes-vous sûr de vouloir supprimer la collecte « ${itemASupprimer?.titre} » ?`"
+      @confirm="confirmerSuppression"
+      @cancel="confirmModal = false"
+    />
+
       <div v-if="!collections.data.length" class="bg-white rounded-2xl p-16 text-center text-gray-400 border border-gray-100">
         <BanknotesIcon class="w-12 h-12 mx-auto mb-3 text-gray-200" />
         Aucune collecte.
@@ -50,15 +57,23 @@
 
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import ConfirmModal from '@/Components/ConfirmModal.vue'
 import { Link, router } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import { PlusIcon, PencilSquareIcon, TrashIcon, BanknotesIcon } from '@heroicons/vue/24/outline'
 
 defineProps({ collections: Object })
+const confirmModal = ref(false)
+const itemASupprimer = ref(null)
 function pourcentage(col) {
   if (!col.objectif) return 0
   return Math.min(100, Math.round(((col.cotisations_sum_montant ?? 0) / col.objectif) * 100))
 }
 function formatMontant(v) { return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF', minimumFractionDigits: 0 }).format(v) }
 function formatDate(d) { return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) }
-function supprimer(col) { if (confirm(`Supprimer "${col.titre}" ?`)) router.delete(route('admin.collections.destroy', col.id)) }
+function supprimer(col) { itemASupprimer.value = col; confirmModal.value = true }
+function confirmerSuppression() {
+  router.delete(route('admin.collections.destroy', itemASupprimer.value.id))
+  confirmModal.value = false
+}
 </script>

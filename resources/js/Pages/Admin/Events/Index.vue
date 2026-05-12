@@ -59,6 +59,13 @@
       </div>
     </div>
 
+    <ConfirmModal
+      :show="confirmModal"
+      :message="`Êtes-vous sûr de vouloir supprimer l'événement « ${itemASupprimer?.titre} » ?`"
+      @confirm="confirmerSuppression"
+      @cancel="confirmModal = false"
+    />
+
     <!-- Pagination -->
     <div v-if="events.last_page > 1" class="flex justify-center gap-2 mt-6">
       <Link
@@ -75,25 +82,21 @@
 
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import ConfirmModal from '@/Components/ConfirmModal.vue'
 import { Link, router } from '@inertiajs/vue3'
-import {
-  PlusIcon,
-  PencilSquareIcon,
-  TrashIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  CalendarDaysIcon,
-} from '@heroicons/vue/24/outline'
+import { ref } from 'vue'
+import { PlusIcon, PencilSquareIcon, TrashIcon, CheckCircleIcon, XCircleIcon, CalendarDaysIcon } from '@heroicons/vue/24/outline'
 
 defineProps({ events: Object })
+const confirmModal = ref(false)
+const itemASupprimer = ref(null)
 
 function formatDate(d) {
   return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 }
-
-function supprimer(event) {
-  if (confirm(`Supprimer "${event.titre}" ?`)) {
-    router.delete(route('admin.evenements.destroy', event.id))
-  }
+function supprimer(e) { itemASupprimer.value = e; confirmModal.value = true }
+function confirmerSuppression() {
+  router.delete(route('admin.evenements.destroy', itemASupprimer.value.id))
+  confirmModal.value = false
 }
 </script>

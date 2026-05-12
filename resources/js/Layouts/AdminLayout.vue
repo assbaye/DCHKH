@@ -52,21 +52,18 @@
         </div>
       </header>
 
-      <div v-if="$page.props.flash?.success" class="mx-8 mt-4 bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm rounded-lg flex items-center gap-2">
-        <CheckCircleIcon class="w-5 h-5 text-green-500 flex-shrink-0" />
-        {{ $page.props.flash.success }}
-      </div>
-
       <main class="flex-1 p-8">
         <slot />
       </main>
     </div>
   </div>
+  <Toast />
 </template>
 
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import AdminNavLink from '@/Components/AdminNavLink.vue'
+import Toast from '@/Components/Toast.vue'
 import {
   ChartBarIcon,
   UsersIcon,
@@ -79,7 +76,6 @@ import {
   ArrowLeftIcon,
   ArrowRightOnRectangleIcon,
   UserCircleIcon,
-  CheckCircleIcon,
 } from '@heroicons/vue/24/outline'
 
 defineProps({ title: { type: String, default: 'Administration' } })

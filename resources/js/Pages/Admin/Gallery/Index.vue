@@ -33,6 +33,13 @@
       </div>
     </div>
 
+    <ConfirmModal
+      :show="confirmModal"
+      message="Êtes-vous sûr de vouloir supprimer ce média ? Cette action est irréversible."
+      @confirm="confirmerSuppression"
+      @cancel="confirmModal = false"
+    />
+
     <div v-if="!items.data.length" class="bg-white rounded-2xl p-16 text-center text-gray-400 border border-gray-100 mt-4">
       <PhotoIcon class="w-12 h-12 mx-auto mb-3 text-gray-200" />
       Aucun élément dans la galerie.
@@ -42,9 +49,17 @@
 
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import ConfirmModal from '@/Components/ConfirmModal.vue'
 import { Link, router } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import { PlusIcon, PencilSquareIcon, TrashIcon, PhotoIcon, VideoCameraIcon } from '@heroicons/vue/24/outline'
 
 defineProps({ items: Object })
-function supprimer(item) { if (confirm('Supprimer cet élément ?')) router.delete(route('admin.galerie.destroy', item.id)) }
+const confirmModal = ref(false)
+const itemASupprimer = ref(null)
+function supprimer(item) { itemASupprimer.value = item; confirmModal.value = true }
+function confirmerSuppression() {
+  router.delete(route('admin.galerie.destroy', itemASupprimer.value.id))
+  confirmModal.value = false
+}
 </script>

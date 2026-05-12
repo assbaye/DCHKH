@@ -48,6 +48,13 @@
           </tr>
         </tbody>
       </table>
+    <ConfirmModal
+      :show="confirmModal"
+      message="Êtes-vous sûr de vouloir supprimer cette cotisation ?"
+      @confirm="confirmerSuppression"
+      @cancel="confirmModal = false"
+    />
+
       <div v-if="!cotisations.data.length" class="text-center py-16 text-gray-400">
         <ClipboardDocumentListIcon class="w-12 h-12 mx-auto mb-3 text-gray-200" />
         Aucune cotisation enregistrée.
@@ -58,11 +65,19 @@
 
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import ConfirmModal from '@/Components/ConfirmModal.vue'
 import { Link, router } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import { PlusIcon, PencilSquareIcon, TrashIcon, ClipboardDocumentListIcon } from '@heroicons/vue/24/outline'
 
 defineProps({ cotisations: Object })
+const confirmModal = ref(false)
+const itemASupprimer = ref(null)
 function formatMontant(v) { return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF', minimumFractionDigits: 0 }).format(v) }
 function formatDate(d) { return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) }
-function supprimer(c) { if (confirm('Supprimer cette cotisation ?')) router.delete(route('admin.cotisations.destroy', c.id)) }
+function supprimer(c) { itemASupprimer.value = c; confirmModal.value = true }
+function confirmerSuppression() {
+  router.delete(route('admin.cotisations.destroy', itemASupprimer.value.id))
+  confirmModal.value = false
+}
 </script>

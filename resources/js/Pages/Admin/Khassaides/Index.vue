@@ -50,16 +50,29 @@
         Aucun khassaïde.
       </div>
     </div>
+
+    <ConfirmModal
+      :show="confirmModal"
+      :message="`Êtes-vous sûr de vouloir supprimer « ${itemASupprimer?.titre} » ?`"
+      @confirm="confirmerSuppression"
+      @cancel="confirmModal = false"
+    />
   </AdminLayout>
 </template>
 
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import ConfirmModal from '@/Components/ConfirmModal.vue'
 import { Link, router } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import { PlusIcon, PencilSquareIcon, TrashIcon, CheckCircleIcon, XCircleIcon, MusicalNoteIcon } from '@heroicons/vue/24/outline'
 
 defineProps({ khassaides: Object })
-function supprimer(k) {
-  if (confirm(`Supprimer "${k.titre}" ?`)) router.delete(route('admin.khassaides.destroy', k.id))
+const confirmModal = ref(false)
+const itemASupprimer = ref(null)
+function supprimer(k) { itemASupprimer.value = k; confirmModal.value = true }
+function confirmerSuppression() {
+  router.delete(route('admin.khassaides.destroy', itemASupprimer.value.id))
+  confirmModal.value = false
 }
 </script>

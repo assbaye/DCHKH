@@ -74,6 +74,13 @@
       </div>
     </div>
 
+    <ConfirmModal
+      :show="confirmModal"
+      :message="`Êtes-vous sûr de vouloir supprimer ${itemASupprimer?.prenom} ${itemASupprimer?.nom} ? Cette action est irréversible.`"
+      @confirm="confirmerSuppression"
+      @cancel="confirmModal = false"
+    />
+
     <div v-if="membres.last_page > 1" class="flex justify-center gap-2 mt-6">
       <Link v-for="p in membres.links" :key="p.label" :href="p.url || '#'" v-html="p.label"
         class="px-3 py-2 rounded-lg text-sm border transition"
@@ -84,6 +91,7 @@
 
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import ConfirmModal from '@/Components/ConfirmModal.vue'
 import { Link, router } from '@inertiajs/vue3'
 import { ref } from 'vue'
 import { MagnifyingGlassIcon, UserPlusIcon, PencilSquareIcon, TrashIcon, UsersIcon } from '@heroicons/vue/24/outline'
@@ -91,6 +99,8 @@ import { MagnifyingGlassIcon, UserPlusIcon, PencilSquareIcon, TrashIcon, UsersIc
 const props = defineProps({ membres: Object, filters: Object })
 const search = ref(props.filters?.search || '')
 const statut = ref(props.filters?.statut || '')
+const confirmModal = ref(false)
+const itemASupprimer = ref(null)
 
 function filtrer() {
   router.get(route('admin.membres.index'), { search: search.value, statut: statut.value }, { preserveState: true })
@@ -99,7 +109,9 @@ function formatDate(d) { return d ? new Date(d).toLocaleDateString('fr-FR', { da
 function roleBadge(r) {
   return { admin: 'bg-red-100 text-red-700', moderateur: 'bg-purple-100 text-purple-700', membre: 'bg-blue-100 text-blue-700' }[r] ?? 'bg-gray-100 text-gray-600'
 }
-function supprimer(m) {
-  if (confirm(`Supprimer ${m.prenom} ${m.nom} ?`)) router.delete(route('admin.membres.destroy', m.id))
+function supprimer(m) { itemASupprimer.value = m; confirmModal.value = true }
+function confirmerSuppression() {
+  router.delete(route('admin.membres.destroy', itemASupprimer.value.id))
+  confirmModal.value = false
 }
 </script>
