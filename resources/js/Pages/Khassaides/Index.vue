@@ -12,8 +12,8 @@
       </div>
 
       <!-- Recherche + filtre langue -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-6 flex flex-col sm:flex-row gap-3">
-        <div class="relative flex-1">
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-6">
+        <div class="relative">
           <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             v-model="searchQuery"
@@ -23,14 +23,6 @@
             class="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d2f6e]/30 focus:border-[#0d2f6e] transition bg-gray-50"
           />
         </div>
-        <select
-          v-model="langueQuery"
-          @change="filtrer"
-          class="border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0d2f6e]/30 focus:border-[#0d2f6e] bg-gray-50"
-        >
-          <option value="">Toutes les langues</option>
-          <option v-for="lang in langues" :key="lang" :value="lang">{{ lang }}</option>
-        </select>
       </div>
 
       <!-- Liste -->
@@ -200,13 +192,10 @@ import {
 
 const props = defineProps({
   khassaides: Object,
-  langues: Array,
   search: String,
-  filtre_langue: String,
 })
 
 const searchQuery  = ref(props.search || '')
-const langueQuery  = ref(props.filtre_langue || '')
 const playing      = ref(null)
 const currentKhassaide = ref(null)
 const audioRef     = ref(null)
@@ -217,7 +206,6 @@ const volume       = ref(1)
 function filtrer() {
   router.get(route('khassaides.index'), {
     search: searchQuery.value || undefined,
-    langue: langueQuery.value || undefined,
   }, { preserveState: true, replace: true })
 }
 

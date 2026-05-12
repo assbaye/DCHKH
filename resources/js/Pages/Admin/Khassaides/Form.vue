@@ -11,16 +11,9 @@
           <input v-model="form.titre" type="text" required class="input" placeholder="Ex: Jazbul Qulub" />
         </FormField>
 
-        <div class="grid grid-cols-2 gap-4">
-          <FormField label="Auteur (poète)" :error="form.errors.auteur" required>
-            <input v-model="form.auteur" type="text" required class="input" placeholder="Ex: Cheikh Ahmadou Bamba" />
-          </FormField>
-          <FormField label="Langue" :error="form.errors.langue" required>
-            <select v-model="form.langue" class="input">
-              <option v-for="l in langues" :key="l" :value="l">{{ l }}</option>
-            </select>
-          </FormField>
-        </div>
+        <FormField label="Auteur (poète)" :error="form.errors.auteur" required>
+          <input v-model="form.auteur" type="text" required class="input" placeholder="Ex: Cheikh Ahmadou Bamba" />
+        </FormField>
 
         <FormField label="Interprète / Kourel" :error="form.errors.interprete" hint="Groupe ou membre du Dahira qui a enregistré">
           <input v-model="form.interprete" type="text" class="input" placeholder="Ex: Kourel des Hommes D.CH.KH." />
@@ -28,10 +21,6 @@
 
         <FormField label="Description" :error="form.errors.description">
           <textarea v-model="form.description" rows="3" class="input" placeholder="Contexte ou description du khassaïde..."></textarea>
-        </FormField>
-
-        <FormField label="Paroles / Texte" :error="form.errors.paroles" hint="Texte en wolof, arabe ou transcription">
-          <textarea v-model="form.paroles" rows="6" class="input font-mono text-xs" placeholder="Paroles du khassaïde..."></textarea>
         </FormField>
 
         <!-- Upload audio -->

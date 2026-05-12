@@ -14,21 +14,16 @@ class KhassaideController extends Controller
         if ($request->search) {
             $query->where(function ($q) use ($request) {
                 $q->where('titre', 'like', "%{$request->search}%")
-                  ->orWhere('auteur', 'like', "%{$request->search}%");
+                  ->orWhere('auteur', 'like', "%{$request->search}%")
+                  ->orWhere('interprete', 'like', "%{$request->search}%");
             });
-        }
-
-        if ($request->langue) {
-            $query->where('langue', $request->langue);
         }
 
         $khassaides = $query->paginate(20);
 
         return inertia('Khassaides/Index', [
             'khassaides' => $khassaides,
-            'langues' => ['wolof', 'arabe', 'français', 'autre'],
             'search' => $request->search,
-            'filtre_langue' => $request->langue,
         ]);
     }
 
