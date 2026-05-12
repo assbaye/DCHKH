@@ -16,9 +16,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Compte admin
-        $admin = User::factory()->create([
-            'name'  => 'Administrateur DCHKH',
-            'email' => 'admin@dchkh.sn',
+        $admin = User::create([
+            'name'        => 'Administrateur DCHKH',
+            'email'       => 'admin@dchkh.sn',
+            'password'    => \Illuminate\Support\Facades\Hash::make('Admin@dchkh2024!'),
+            'is_approved' => true,
         ]);
 
         \App\Models\Member::create([
