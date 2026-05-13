@@ -72,44 +72,42 @@
       </div>
 
       <!-- Menu mobile -->
-      <Transition enter-from-class="opacity-0 -translate-y-2" enter-active-class="transition duration-200" leave-to-class="opacity-0 -translate-y-2" leave-active-class="transition duration-150">
-        <div v-if="mobileOpen" class="md:hidden bg-[#0a2558] border-t border-blue-800 px-4 py-3 space-y-1">
-          <MobileNavLink :href="route('home')" :active="$page.component === 'Home'" @click="mobileOpen = false">
-            <HomeIcon class="w-4 h-4" /> Accueil
-          </MobileNavLink>
-          <MobileNavLink :href="route('events.index')" :active="$page.component.startsWith('Events')" @click="mobileOpen = false">
-            <CalendarDaysIcon class="w-4 h-4" /> Événements
-          </MobileNavLink>
-          <MobileNavLink :href="route('khassaides.index')" :active="$page.component.startsWith('Khassaides')" @click="mobileOpen = false">
-            <MusicalNoteIcon class="w-4 h-4" /> Khassaïdes
-          </MobileNavLink>
-          <MobileNavLink :href="route('gallery.index')" :active="$page.component.startsWith('Gallery')" @click="mobileOpen = false">
-            <PhotoIcon class="w-4 h-4" /> Galerie
-          </MobileNavLink>
-          <MobileNavLink :href="route('cotisations.index')" :active="$page.component.startsWith('Cotisations')" @click="mobileOpen = false">
-            <BanknotesIcon class="w-4 h-4" /> Cotisations
-          </MobileNavLink>
+      <div v-if="mobileOpen" class="md:hidden bg-[#0a2558] border-t border-blue-800 px-4 py-3 space-y-1">
+        <Link :href="route('home')" @click="mobileOpen = false" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm transition" :class="$page.component === 'Home' ? 'bg-[#0d2f6e] text-white font-semibold' : 'text-blue-200 hover:bg-blue-800 hover:text-white'">
+          <HomeIcon class="w-4 h-4" /> Accueil
+        </Link>
+        <Link :href="route('events.index')" @click="mobileOpen = false" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm transition" :class="$page.component.startsWith('Events') ? 'bg-[#0d2f6e] text-white font-semibold' : 'text-blue-200 hover:bg-blue-800 hover:text-white'">
+          <CalendarDaysIcon class="w-4 h-4" /> Événements
+        </Link>
+        <Link :href="route('khassaides.index')" @click="mobileOpen = false" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm transition" :class="$page.component.startsWith('Khassaides') ? 'bg-[#0d2f6e] text-white font-semibold' : 'text-blue-200 hover:bg-blue-800 hover:text-white'">
+          <MusicalNoteIcon class="w-4 h-4" /> Khassaïdes
+        </Link>
+        <Link :href="route('gallery.index')" @click="mobileOpen = false" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm transition" :class="$page.component.startsWith('Gallery') ? 'bg-[#0d2f6e] text-white font-semibold' : 'text-blue-200 hover:bg-blue-800 hover:text-white'">
+          <PhotoIcon class="w-4 h-4" /> Galerie
+        </Link>
+        <Link :href="route('cotisations.index')" @click="mobileOpen = false" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm transition" :class="$page.component.startsWith('Cotisations') ? 'bg-[#0d2f6e] text-white font-semibold' : 'text-blue-200 hover:bg-blue-800 hover:text-white'">
+          <BanknotesIcon class="w-4 h-4" /> Cotisations
+        </Link>
 
-          <div class="border-t border-blue-800 pt-2 mt-2 space-y-1">
-            <template v-if="$page.props.auth.user">
-              <MobileNavLink :href="route('member.profil')" @click="mobileOpen = false">
-                <UserCircleIcon class="w-4 h-4" /> Mon profil
-              </MobileNavLink>
-              <Link :href="route('logout')" method="post" as="button" class="flex items-center gap-2 w-full text-left px-3 py-2.5 rounded-lg text-red-400 text-sm hover:bg-blue-800 transition">
-                <ArrowRightOnRectangleIcon class="w-4 h-4" /> Déconnexion
-              </Link>
-            </template>
-            <template v-else>
-              <MobileNavLink :href="route('login')" @click="mobileOpen = false">
-                <ArrowLeftOnRectangleIcon class="w-4 h-4" /> Connexion
-              </MobileNavLink>
-              <MobileNavLink :href="route('register')" @click="mobileOpen = false">
-                <UserPlusIcon class="w-4 h-4" /> Rejoindre le Dahira
-              </MobileNavLink>
-            </template>
-          </div>
+        <div class="border-t border-blue-800 pt-2 mt-2 space-y-1">
+          <template v-if="$page.props.auth.user">
+            <Link :href="route('member.profil')" @click="mobileOpen = false" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-blue-200 hover:bg-blue-800 hover:text-white transition">
+              <UserCircleIcon class="w-4 h-4" /> Mon profil
+            </Link>
+            <Link :href="route('logout')" method="post" as="button" class="flex items-center gap-2 w-full text-left px-3 py-2.5 rounded-lg text-red-400 text-sm hover:bg-blue-800 transition">
+              <ArrowRightOnRectangleIcon class="w-4 h-4" /> Déconnexion
+            </Link>
+          </template>
+          <template v-else>
+            <Link :href="route('login')" @click="mobileOpen = false" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-blue-200 hover:bg-blue-800 hover:text-white transition">
+              <ArrowLeftOnRectangleIcon class="w-4 h-4" /> Connexion
+            </Link>
+            <Link :href="route('register')" @click="mobileOpen = false" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-blue-200 hover:bg-blue-800 hover:text-white transition">
+              <UserPlusIcon class="w-4 h-4" /> Rejoindre le Dahira
+            </Link>
+          </template>
         </div>
-      </Transition>
+      </div>
     </nav>
 
     <!-- Contenu -->
@@ -170,16 +168,5 @@ const isAdmin = computed(() => {
   return member && ['admin', 'moderateur'].includes(member.role)
 })
 
-const MobileNavLink = {
-  props: ['href', 'active'],
-  emits: ['click'],
-  template: `
-    <Link :href="href" @click="$emit('click')"
-      class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm transition"
-      :class="active ? 'bg-[#0d2f6e] text-white font-semibold' : 'text-blue-200 hover:bg-blue-800 hover:text-white'">
-      <slot />
-    </Link>
-  `,
-  components: { Link },
-}
+
 </script>
