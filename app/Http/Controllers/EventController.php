@@ -19,7 +19,7 @@ class EventController extends Controller
 
         return inertia('Events/Index', [
             'events' => $events,
-            'categories' => ['Magal', 'Reunion', 'Collecte', 'Khassaides', 'Autre'],
+            'categories' => ['Journees Khassaides', 'Dahira', 'Ziar annuelle', 'Reunion'],
             'filtre' => $request->categorie,
         ]);
     }

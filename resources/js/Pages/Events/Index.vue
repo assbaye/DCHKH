@@ -87,11 +87,10 @@ function formatDate(dateStr) {
 
 function categorieCouleur(cat) {
   const map = {
-    Magal: 'bg-yellow-100 text-yellow-800',
-    Reunion: 'bg-blue-100 text-blue-800',
-    Collecte: 'bg-green-100 text-green-800',
-    Khassaides: 'bg-purple-100 text-purple-800',
-    Autre: 'bg-gray-100 text-gray-700',
+    'Journees Khassaides': 'bg-purple-100 text-purple-800',
+    'Dahira':              'bg-yellow-100 text-yellow-800',
+    'Ziar annuelle':       'bg-green-100 text-green-800',
+    'Reunion':             'bg-blue-100 text-blue-800',
   }
   return map[cat] ?? 'bg-gray-100 text-gray-700'
 }
