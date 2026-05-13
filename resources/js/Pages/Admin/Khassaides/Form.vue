@@ -104,7 +104,7 @@ function soumettre() {
   if (props.khassaide) {
     form.put(route('admin.khassaides.update', props.khassaide.id), { forceFormData: true })
   } else {
-    form.post(route('admin.khassaides.store'), { forceFormData: true })
+    form.post(route('admin.khassaides.store'))
   }
 }
 </script>
