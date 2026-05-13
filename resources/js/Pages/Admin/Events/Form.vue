@@ -79,8 +79,8 @@ const form = useForm({
 })
 
 function soumettre() {
-  if (props.event) form.post(route('admin.evenements.update', props.event.id), { method: 'put' })
-  else form.post(route('admin.evenements.store'))
+  if (props.event) form.put(route('admin.evenements.update', props.event.id), { forceFormData: true })
+  else form.post(route('admin.evenements.store'), { forceFormData: true })
 }
 </script>
 

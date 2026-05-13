@@ -102,10 +102,7 @@ const form = useForm({
 
 function soumettre() {
   if (props.khassaide) {
-    form.post(route('admin.khassaides.update', props.khassaide.id), {
-      forceFormData: true,
-      _method: 'put',
-    })
+    form.put(route('admin.khassaides.update', props.khassaide.id), { forceFormData: true })
   } else {
     form.post(route('admin.khassaides.store'), { forceFormData: true })
   }

@@ -183,7 +183,7 @@ function clearFiles() {
 
 function soumettre() {
   if (props.item) {
-    form.post(route('admin.galerie.update', props.item.id), { forceFormData: true, _method: 'put' })
+    form.put(route('admin.galerie.update', props.item.id), { forceFormData: true })
   } else {
     form.post(route('admin.galerie.store'), { forceFormData: true })
   }
