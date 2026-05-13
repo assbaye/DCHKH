@@ -35,7 +35,7 @@
             </NavLink>
           </div>
 
-          <!-- Auth buttons -->
+          <!-- Auth + burger -->
           <div class="flex items-center gap-2">
             <template v-if="$page.props.auth.user">
               <Link :href="route('member.profil')" class="hidden sm:flex items-center gap-1.5 text-white text-sm hover:text-[#c9973a] transition">
@@ -46,31 +46,71 @@
                 <Cog6ToothIcon class="w-4 h-4" />
                 <span class="hidden sm:inline">Admin</span>
               </Link>
-              <Link :href="route('logout')" method="post" as="button" class="flex items-center gap-1.5 text-blue-300 text-sm hover:text-white transition">
+              <Link :href="route('logout')" method="post" as="button" class="hidden md:flex items-center gap-1.5 text-blue-300 text-sm hover:text-white transition">
                 <ArrowRightOnRectangleIcon class="w-5 h-5" />
               </Link>
             </template>
             <template v-else>
-              <Link :href="route('login')" class="flex items-center gap-1.5 text-white text-sm hover:text-[#c9973a] transition">
+              <Link :href="route('login')" class="hidden md:flex items-center gap-1.5 text-white text-sm hover:text-[#c9973a] transition">
                 <ArrowLeftOnRectangleIcon class="w-5 h-5" />
                 <span class="hidden sm:inline">Connexion</span>
               </Link>
-              <Link :href="route('register')" class="flex items-center gap-1.5 bg-[#c9973a] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-yellow-600 transition">
+              <Link :href="route('register')" class="hidden md:flex items-center gap-1.5 bg-[#c9973a] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-yellow-600 transition">
                 <UserPlusIcon class="w-4 h-4" />
                 <span class="hidden sm:inline">Rejoindre</span>
               </Link>
             </template>
+
+            <!-- Burger mobile -->
+            <button @click="mobileOpen = !mobileOpen" class="md:hidden text-white p-1.5 rounded-lg hover:bg-blue-700 transition">
+              <XMarkIcon v-if="mobileOpen" class="w-6 h-6" />
+              <Bars3Icon v-else class="w-6 h-6" />
+            </button>
           </div>
 
         </div>
       </div>
-    </nav>
 
-    <!-- Flash messages -->
-    <div v-if="$page.props.flash?.success" class="bg-green-50 border-l-4 border-green-500 text-green-800 px-6 py-3 text-sm flex items-center gap-2">
-      <CheckCircleIcon class="w-5 h-5 text-green-500 flex-shrink-0" />
-      {{ $page.props.flash.success }}
-    </div>
+      <!-- Menu mobile -->
+      <Transition enter-from-class="opacity-0 -translate-y-2" enter-active-class="transition duration-200" leave-to-class="opacity-0 -translate-y-2" leave-active-class="transition duration-150">
+        <div v-if="mobileOpen" class="md:hidden bg-[#0a2558] border-t border-blue-800 px-4 py-3 space-y-1">
+          <MobileNavLink :href="route('home')" :active="$page.component === 'Home'" @click="mobileOpen = false">
+            <HomeIcon class="w-4 h-4" /> Accueil
+          </MobileNavLink>
+          <MobileNavLink :href="route('events.index')" :active="$page.component.startsWith('Events')" @click="mobileOpen = false">
+            <CalendarDaysIcon class="w-4 h-4" /> Événements
+          </MobileNavLink>
+          <MobileNavLink :href="route('khassaides.index')" :active="$page.component.startsWith('Khassaides')" @click="mobileOpen = false">
+            <MusicalNoteIcon class="w-4 h-4" /> Khassaïdes
+          </MobileNavLink>
+          <MobileNavLink :href="route('gallery.index')" :active="$page.component.startsWith('Gallery')" @click="mobileOpen = false">
+            <PhotoIcon class="w-4 h-4" /> Galerie
+          </MobileNavLink>
+          <MobileNavLink :href="route('cotisations.index')" :active="$page.component.startsWith('Cotisations')" @click="mobileOpen = false">
+            <BanknotesIcon class="w-4 h-4" /> Cotisations
+          </MobileNavLink>
+
+          <div class="border-t border-blue-800 pt-2 mt-2 space-y-1">
+            <template v-if="$page.props.auth.user">
+              <MobileNavLink :href="route('member.profil')" @click="mobileOpen = false">
+                <UserCircleIcon class="w-4 h-4" /> Mon profil
+              </MobileNavLink>
+              <Link :href="route('logout')" method="post" as="button" class="flex items-center gap-2 w-full text-left px-3 py-2.5 rounded-lg text-red-400 text-sm hover:bg-blue-800 transition">
+                <ArrowRightOnRectangleIcon class="w-4 h-4" /> Déconnexion
+              </Link>
+            </template>
+            <template v-else>
+              <MobileNavLink :href="route('login')" @click="mobileOpen = false">
+                <ArrowLeftOnRectangleIcon class="w-4 h-4" /> Connexion
+              </MobileNavLink>
+              <MobileNavLink :href="route('register')" @click="mobileOpen = false">
+                <UserPlusIcon class="w-4 h-4" /> Rejoindre le Dahira
+              </MobileNavLink>
+            </template>
+          </div>
+        </div>
+      </Transition>
+    </nav>
 
     <!-- Contenu -->
     <main>
@@ -114,27 +154,32 @@
 </template>
 
 <script setup>
+import { ref, computed } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
-import { computed } from 'vue'
 import NavLink from '@/Components/NavLink.vue'
 import {
-  HomeIcon,
-  CalendarDaysIcon,
-  MusicalNoteIcon,
-  PhotoIcon,
-  BanknotesIcon,
-  UserCircleIcon,
-  UserPlusIcon,
-  Cog6ToothIcon,
-  ArrowRightOnRectangleIcon,
-  ArrowLeftOnRectangleIcon,
-  MapPinIcon,
-  CheckCircleIcon,
+  HomeIcon, CalendarDaysIcon, MusicalNoteIcon, PhotoIcon, BanknotesIcon,
+  UserCircleIcon, UserPlusIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon,
+  ArrowLeftOnRectangleIcon, MapPinIcon, Bars3Icon, XMarkIcon,
 } from '@heroicons/vue/24/outline'
 
 const page = usePage()
+const mobileOpen = ref(false)
 const isAdmin = computed(() => {
   const member = page.props.auth?.user?.member
   return member && ['admin', 'moderateur'].includes(member.role)
 })
+
+const MobileNavLink = {
+  props: ['href', 'active'],
+  emits: ['click'],
+  template: `
+    <Link :href="href" @click="$emit('click')"
+      class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm transition"
+      :class="active ? 'bg-[#0d2f6e] text-white font-semibold' : 'text-blue-200 hover:bg-blue-800 hover:text-white'">
+      <slot />
+    </Link>
+  `,
+  components: { Link },
+}
 </script>
