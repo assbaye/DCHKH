@@ -70,7 +70,7 @@ const props = defineProps({ event: Object, categories: Array })
 const form = useForm({
   titre: props.event?.titre ?? '',
   description: props.event?.description ?? '',
-  categorie: props.event?.categorie ?? 'Autre',
+  categorie: props.event?.categorie ?? 'Reunion',
   date_event: props.event?.date_event?.split('T')[0] ?? '',
   heure_event: props.event?.heure_event ?? '',
   lieu: props.event?.lieu ?? '',

@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
+    private array $categories = ['Journees Khassaides', 'Dahira', 'Ziar annuelle', 'Reunion'];
+
     public function index()
     {
         $events = Event::orderBy('date_event', 'desc')->paginate(15);
@@ -18,18 +20,16 @@ class EventController extends Controller
     public function create()
     {
         return inertia('Admin/Events/Form', [
-            'categories' => ['Magal', 'Reunion', 'Collecte', 'Khassaides', 'Autre'],
+            'categories' => $this->categories,
         ]);
     }
 
     public function store(Request $request)
     {
-        \Log::debug('EVENT STORE - all(): ', $request->all());
-        \Log::debug('EVENT STORE - content: ' . $request->getContent());
         $data = $request->validate([
             'titre'       => 'required|string|max:255',
             'description' => 'nullable|string',
-            'categorie'   => 'required|in:Magal,Reunion,Collecte,Khassaides,Autre',
+            'categorie'   => 'required|in:Journees Khassaides,Dahira,Ziar annuelle,Reunion',
             'date_event'  => 'required|date',
             'heure_event' => 'nullable|date_format:H:i',
             'lieu'        => 'nullable|string|max:255',
@@ -53,7 +53,7 @@ class EventController extends Controller
     {
         return inertia('Admin/Events/Form', [
             'event' => $evenement,
-            'categories' => ['Magal', 'Reunion', 'Collecte', 'Khassaides', 'Autre'],
+            'categories' => $this->categories,
         ]);
     }
 
@@ -62,7 +62,7 @@ class EventController extends Controller
         $data = $request->validate([
             'titre'       => 'required|string|max:255',
             'description' => 'nullable|string',
-            'categorie'   => 'required|in:Magal,Reunion,Collecte,Khassaides,Autre',
+            'categorie'   => 'required|in:Journees Khassaides,Dahira,Ziar annuelle,Reunion',
             'date_event'  => 'required|date',
             'heure_event' => 'nullable|date_format:H:i',
             'lieu'        => 'nullable|string|max:255',
