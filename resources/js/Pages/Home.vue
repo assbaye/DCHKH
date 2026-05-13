@@ -51,16 +51,33 @@
         <div
           v-for="event in prochains_evenements"
           :key="event.id"
-          class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition"
+          class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 border border-gray-100"
         >
-          <div class="h-2 bg-[#c9973a]"></div>
+          <!-- Image ou placeholder -->
+          <div class="relative">
+            <img v-if="event.image" :src="`/storage/${event.image}`" :alt="event.titre" class="w-full h-40 object-cover" />
+            <div v-else class="w-full h-40 flex items-center justify-center" :class="categorieBg(event.categorie)">
+              <component :is="categorieIcone(event.categorie)" class="w-12 h-12" :class="categorieIconColor(event.categorie)" />
+            </div>
+            <span class="absolute top-3 left-3 inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full" :class="categorieCouleur(event.categorie)">
+              <component :is="categorieIcone(event.categorie)" class="w-3 h-3" />
+              {{ event.categorie }}
+            </span>
+          </div>
           <div class="p-5">
-            <span class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded mb-3">{{ event.categorie }}</span>
-            <h3 class="font-bold text-gray-800 mb-2">{{ event.titre }}</h3>
-            <p class="text-gray-500 text-sm">📅 {{ formatDate(event.date_event) }}</p>
-            <p v-if="event.lieu" class="text-gray-500 text-sm">📍 {{ event.lieu }}</p>
-            <Link :href="route('events.show', event.id)" class="mt-4 inline-block text-[#0d2f6e] text-sm font-medium hover:underline">
-              En savoir plus →
+            <h3 class="font-bold text-gray-800 mb-3 line-clamp-2">{{ event.titre }}</h3>
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2 text-sm text-gray-500">
+                <CalendarDaysIcon class="w-4 h-4 text-[#0d2f6e] flex-shrink-0" />
+                <span>{{ formatDate(event.date_event) }}</span>
+              </div>
+              <div v-if="event.lieu" class="flex items-center gap-2 text-sm text-gray-500">
+                <MapPinIcon class="w-4 h-4 text-[#0d2f6e] flex-shrink-0" />
+                <span>{{ event.lieu }}</span>
+              </div>
+            </div>
+            <Link :href="route('events.show', event.id)" class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#0d2f6e] hover:gap-2.5 transition-all">
+              En savoir plus <ArrowRightIcon class="w-4 h-4" />
             </Link>
           </div>
         </div>
@@ -96,6 +113,7 @@
 <script setup>
 import MainLayout from '@/Layouts/MainLayout.vue'
 import { Link } from '@inertiajs/vue3'
+import { CalendarDaysIcon, MapPinIcon, ArrowRightIcon, MusicalNoteIcon, UserGroupIcon, StarIcon, ChatBubbleLeftRightIcon } from '@heroicons/vue/24/outline'
 
 defineProps({
   stats: Object,
@@ -105,6 +123,23 @@ defineProps({
 
 function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+}
+
+function categorieIcone(cat) {
+  const map = { 'Journees Khassaides': MusicalNoteIcon, 'Dahira': UserGroupIcon, 'Ziar annuelle': StarIcon, 'Reunion': ChatBubbleLeftRightIcon }
+  return map[cat] ?? CalendarDaysIcon
+}
+function categorieCouleur(cat) {
+  const map = { 'Journees Khassaides': 'bg-purple-100 text-purple-700', 'Dahira': 'bg-yellow-100 text-yellow-700', 'Ziar annuelle': 'bg-green-100 text-green-700', 'Reunion': 'bg-blue-100 text-blue-700' }
+  return map[cat] ?? 'bg-gray-100 text-gray-600'
+}
+function categorieBg(cat) {
+  const map = { 'Journees Khassaides': 'bg-purple-50', 'Dahira': 'bg-yellow-50', 'Ziar annuelle': 'bg-green-50', 'Reunion': 'bg-blue-50' }
+  return map[cat] ?? 'bg-gray-50'
+}
+function categorieIconColor(cat) {
+  const map = { 'Journees Khassaides': 'text-purple-300', 'Dahira': 'text-yellow-300', 'Ziar annuelle': 'text-green-300', 'Reunion': 'text-blue-300' }
+  return map[cat] ?? 'text-gray-300'
 }
 </script>
 
