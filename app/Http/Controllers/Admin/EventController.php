@@ -24,6 +24,8 @@ class EventController extends Controller
 
     public function store(Request $request)
     {
+        \Log::debug('EVENT STORE - all(): ', $request->all());
+        \Log::debug('EVENT STORE - content: ' . $request->getContent());
         $data = $request->validate([
             'titre'       => 'required|string|max:255',
             'description' => 'nullable|string',
