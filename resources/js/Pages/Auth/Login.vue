@@ -2,6 +2,8 @@
 import GuestLayout from '@/Layouts/GuestLayout.vue'
 import InputError from '@/Components/InputError.vue'
 import { Head, Link, useForm } from '@inertiajs/vue3'
+import { ref } from 'vue'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
 
 defineProps({
     canResetPassword: Boolean,
@@ -13,6 +15,8 @@ const form = useForm({
     password: '',
     remember: false,
 })
+
+const showPassword = ref(false)
 
 const submit = () => {
     form.post(route('login'), {
@@ -58,15 +62,21 @@ const submit = () => {
                         Mot de passe oublié ?
                     </Link>
                 </div>
-                <input
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    required
-                    autocomplete="current-password"
-                    placeholder="Votre mot de passe"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0d2f6e] focus:border-transparent"
-                />
+                <div class="relative">
+                    <input
+                        id="password"
+                        v-model="form.password"
+                        :type="showPassword ? 'text' : 'password'"
+                        required
+                        autocomplete="current-password"
+                        placeholder="Votre mot de passe"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#0d2f6e] focus:border-transparent"
+                    />
+                    <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <EyeSlashIcon v-if="showPassword" class="w-5 h-5" />
+                        <EyeIcon v-else class="w-5 h-5" />
+                    </button>
+                </div>
                 <InputError class="mt-1" :message="form.errors.password" />
             </div>
 
