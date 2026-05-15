@@ -16,7 +16,7 @@
       <!-- Bandeau haut -->
       <div class="card-header">
         <div class="card-header-logo">
-          <span class="font-black text-white text-[10px] tracking-widest leading-none">D.CH.KH</span>
+          <img src="/images/logo.jpeg" alt="Logo" style="height:28px; width:auto; display:block;" />
         </div>
         <div class="text-right">
           <p class="text-white/60 text-[7px] uppercase tracking-widest">Carte de membre</p>
@@ -121,9 +121,8 @@ function goBack() { window.history.back() }
 }
 
 .card-header-logo {
-  background: rgba(201,151,58,0.9);
-  border-radius: 4px;
-  padding: 3px 7px;
+  display: flex;
+  align-items: center;
 }
 
 .card-body {
