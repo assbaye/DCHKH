@@ -231,7 +231,7 @@
 <script setup>
 import MainLayout from '@/Layouts/MainLayout.vue'
 import { Link, usePage, useForm } from '@inertiajs/vue3'
-import { computed, ref, nextTick } from 'vue'
+import { computed, ref, nextTick, watch } from 'vue'
 import Cropper from 'cropperjs'
 import {
   UserIcon, BanknotesIcon, Cog6ToothIcon, PencilSquareIcon,
@@ -255,45 +255,47 @@ const cropperImage = ref(null)
 const photoForm = useForm({ photo: null })
 let cropperInstance = null
 
+// Dès que l'élément img est monté dans le DOM (v-if), on lance le cropper
+watch(cropperImage, (img) => {
+  if (!img || !rawPreview.value) return
+  if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null }
+  const setup = () => {
+    cropperInstance = new Cropper(img, {
+      aspectRatio: 1,
+      viewMode: 1,
+      dragMode: 'move',
+      cropBoxResizable: false,
+      cropBoxMovable: false,
+      toggleDragModeOnDblclick: false,
+      background: false,
+      ready() {
+        const container = cropperInstance.getContainerData()
+        const size = Math.min(container.width, container.height) * 0.8
+        cropperInstance.setCropBoxData({
+          left: (container.width - size) / 2,
+          top: (container.height - size) / 2,
+          width: size,
+          height: size,
+        })
+      },
+    })
+  }
+  if (img.complete && img.naturalWidth > 0) {
+    setup()
+  } else {
+    img.addEventListener('load', setup, { once: true })
+  }
+})
+
 function onPhotoChange(e) {
   const file = e.target.files[0]
   if (!file) return
   if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null }
   rawPreview.value = URL.createObjectURL(file)
   showCropper.value = true
-  nextTick(() => {
-    const img = cropperImage.value
-    if (!img) return
-    if (img.complete && img.naturalWidth > 0) {
-      initCropper()
-    }
-    // sinon @load sur l'image appellera initCropper
-  })
 }
 
-function initCropper() {
-  if (!cropperImage.value) return
-  if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null }
-  cropperInstance = new Cropper(cropperImage.value, {
-    aspectRatio: 1,
-    viewMode: 1,
-    dragMode: 'move',
-    cropBoxResizable: false,
-    cropBoxMovable: false,
-    toggleDragModeOnDblclick: false,
-    background: false,
-    ready() {
-      const container = cropperInstance.getContainerData()
-      const size = Math.min(container.width, container.height) * 0.8
-      cropperInstance.setCropBoxData({
-        left: (container.width - size) / 2,
-        top: (container.height - size) / 2,
-        width: size,
-        height: size,
-      })
-    }
-  })
-}
+function initCropper() {} // gardé pour @load dans le template, non utilisé
 
 function validerCrop() {
   if (!cropperInstance) return
