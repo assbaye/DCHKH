@@ -121,7 +121,7 @@
             <div class="flex items-center gap-5">
               <!-- Aperçu -->
               <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-[#c9973a] flex-shrink-0 bg-[#0d2f6e]">
-                <img v-if="photoPreview" :src="photoPreview" class="w-full h-full object-cover" />
+                <img v-if="croppedPreview" :src="croppedPreview" class="w-full h-full object-cover" />
                 <img v-else-if="member.photo" :src="`/storage/${member.photo}`" class="w-full h-full object-cover" />
                 <div v-else class="w-full h-full flex items-center justify-center text-xl font-bold text-white">
                   {{ initiales }}
@@ -136,7 +136,7 @@
                 </label>
                 <p class="text-xs text-gray-400 mt-1.5">JPG, PNG, WEBP — max 2 Mo</p>
                 <button
-                  v-if="photoFile"
+                  v-if="croppedBlob"
                   @click="uploadPhoto"
                   :disabled="photoForm.processing"
                   class="mt-2 inline-flex items-center gap-2 bg-[#0d2f6e] text-white px-4 py-1.5 rounded-lg text-sm hover:bg-blue-900 transition disabled:opacity-60"
@@ -145,6 +145,28 @@
                   {{ photoForm.processing ? 'Envoi...' : 'Enregistrer la photo' }}
                 </button>
                 <p v-if="photoForm.errors.photo" class="text-red-500 text-xs mt-1">{{ photoForm.errors.photo }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal recadrage -->
+          <div v-if="showCropper" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+              <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <CameraIcon class="w-5 h-5 text-[#0d2f6e]" />
+                Recadrer la photo
+              </h3>
+              <div class="relative w-full" style="height: 300px;">
+                <img ref="cropperImage" :src="rawPreview" class="max-w-full" />
+              </div>
+              <p class="text-xs text-gray-400 mt-3 text-center">Déplacez et zoomez pour cadrer votre visage</p>
+              <div class="flex gap-3 mt-4">
+                <button @click="annulerCrop" class="flex-1 border border-gray-200 text-gray-600 py-2 rounded-xl text-sm hover:bg-gray-50 transition">
+                  Annuler
+                </button>
+                <button @click="validerCrop" class="flex-1 bg-[#0d2f6e] text-white py-2 rounded-xl text-sm font-semibold hover:bg-blue-900 transition">
+                  Valider le recadrage
+                </button>
               </div>
             </div>
           </div>
@@ -209,7 +231,8 @@
 <script setup>
 import MainLayout from '@/Layouts/MainLayout.vue'
 import { Link, usePage, useForm } from '@inertiajs/vue3'
-import { computed, ref } from 'vue'
+import { computed, ref, nextTick } from 'vue'
+import Cropper from 'cropperjs'
 import {
   UserIcon, BanknotesIcon, Cog6ToothIcon, PencilSquareIcon,
   CalendarDaysIcon, MusicalNoteIcon, ExclamationTriangleIcon, IdentificationIcon,
@@ -224,22 +247,54 @@ const initiales = computed(() => {
   return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
 })
 
-const photoFile = ref(null)
-const photoPreview = ref(null)
+const showCropper = ref(false)
+const rawPreview = ref(null)
+const croppedPreview = ref(null)
+const croppedBlob = ref(null)
+const cropperImage = ref(null)
 const photoForm = useForm({ photo: null })
+let cropperInstance = null
 
 function onPhotoChange(e) {
   const file = e.target.files[0]
   if (!file) return
-  photoFile.value = file
-  photoPreview.value = URL.createObjectURL(file)
+  rawPreview.value = URL.createObjectURL(file)
+  showCropper.value = true
+  nextTick(() => {
+    if (cropperInstance) cropperInstance.destroy()
+    cropperInstance = new Cropper(cropperImage.value, {
+      aspectRatio: 1,
+      viewMode: 1,
+      dragMode: 'move',
+      cropBoxResizable: false,
+      cropBoxMovable: false,
+      toggleDragModeOnDblclick: false,
+      background: false,
+    })
+  })
+}
+
+function validerCrop() {
+  cropperInstance.getCroppedCanvas({ width: 400, height: 400 }).toBlob(blob => {
+    croppedBlob.value = blob
+    croppedPreview.value = URL.createObjectURL(blob)
+    showCropper.value = false
+    cropperInstance.destroy()
+    cropperInstance = null
+  }, 'image/jpeg', 0.9)
+}
+
+function annulerCrop() {
+  showCropper.value = false
+  if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null }
 }
 
 function uploadPhoto() {
-  photoForm.photo = photoFile.value
+  const file = new File([croppedBlob.value], 'photo.jpg', { type: 'image/jpeg' })
+  photoForm.photo = file
   photoForm.post(route('member.photo.update'), {
     forceFormData: true,
-    onSuccess: () => { photoFile.value = null },
+    onSuccess: () => { croppedBlob.value = null },
   })
 }
 
@@ -261,4 +316,9 @@ function formatMontant(v) {
   background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1'%3E%3Cpolygon points='40,5 75,20 75,60 40,75 5,60 5,20'/%3E%3C/g%3E%3C/svg%3E");
   background-size: 80px;
 }
+</style>
+
+<style>
+/* Cropperjs styles */
+.cropper-container{direction:ltr;font-size:0;line-height:0;position:relative;-ms-touch-action:none;touch-action:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.cropper-container img{display:block;height:100%;image-orientation:0deg;max-height:none!important;max-width:none!important;min-height:0!important;min-width:0!important;width:100%}.cropper-wrap-box,.cropper-canvas,.cropper-drag-box,.cropper-crop-box,.cropper-modal{bottom:0;left:0;position:absolute;right:0;top:0}.cropper-wrap-box,.cropper-canvas{overflow:hidden}.cropper-drag-box{background-color:#fff;opacity:0}.cropper-modal{background-color:#000;opacity:.5}.cropper-view-box{display:block;height:100%;outline:1px solid #39f;outline-color:rgba(51,153,255,.75);overflow:hidden;width:100%}.cropper-dashed{border:0 dashed #eee;display:block;opacity:.5;position:absolute}.cropper-dashed.dashed-h{border-bottom-width:1px;border-top-width:1px;height:calc(100% / 3);left:0;top:calc(100% / 3);width:100%}.cropper-dashed.dashed-v{border-left-width:1px;border-right-width:1px;height:100%;left:calc(100% / 3);top:0;width:calc(100% / 3)}.cropper-center{display:block;height:0;left:50%;opacity:.75;position:absolute;top:50%;width:0}.cropper-center::before,.cropper-center::after{background-color:#eee;content:" ";display:block;position:absolute}.cropper-center::before{height:1px;left:-3px;top:0;width:7px}.cropper-center::after{height:7px;left:0;top:-3px;width:1px}.cropper-face,.cropper-line,.cropper-point{display:block;height:100%;opacity:.1;position:absolute;width:100%}.cropper-face{background-color:#fff;left:0;top:0}.cropper-line{background-color:#39f}.cropper-line.line-e{cursor:ew-resize;right:-3px;top:0;width:5px}.cropper-line.line-n{cursor:ns-resize;height:5px;left:0;top:-3px}.cropper-line.line-w{cursor:ew-resize;left:-3px;top:0;width:5px}.cropper-line.line-s{bottom:-3px;cursor:ns-resize;height:5px;left:0}.cropper-point{background-color:#39f;height:5px;opacity:.75;width:5px}.cropper-point.point-e{cursor:ew-resize;margin-top:-3px;right:-3px;top:50%}.cropper-point.point-n{cursor:ns-resize;left:50%;margin-left:-3px;top:-3px}.cropper-point.point-w{cursor:ew-resize;left:-3px;margin-top:-3px;top:50%}.cropper-point.point-s{bottom:-3px;cursor:s-resize;left:50%;margin-left:-3px}.cropper-point.point-ne{cursor:nesw-resize;right:-3px;top:-3px}.cropper-point.point-nw{cursor:nwse-resize;left:-3px;top:-3px}.cropper-point.point-sw{bottom:-3px;cursor:nesw-resize;left:-3px}.cropper-point.point-se{bottom:-3px;cursor:nwse-resize;height:20px;opacity:1;right:-3px;width:20px}@media (min-width:768px){.cropper-point.point-se{height:15px;width:15px}}@media (min-width:992px){.cropper-point.point-se{height:10px;width:10px}}@media (min-width:1200px){.cropper-point.point-se{height:5px;opacity:.75;width:5px}}.cropper-invisible{opacity:0}.cropper-bg{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAADklEQVQI12P4z8BQDwADhQGAWjR9awAAAABJRU5ErkJggg==")}.cropper-hide{display:block;height:1px;position:absolute;width:1px}.cropper-hidden{display:none!important}.cropper-move{cursor:move}.cropper-crop{cursor:crosshair}.cropper-disabled .cropper-drag-box,.cropper-disabled .cropper-face,.cropper-disabled .cropper-line,.cropper-disabled .cropper-point{cursor:not-allowed}
 </style>
