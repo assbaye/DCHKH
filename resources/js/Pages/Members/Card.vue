@@ -16,7 +16,7 @@
       <!-- Bandeau haut -->
       <div class="card-header">
         <div class="card-header-logo">
-          <img src="/images/logo.jpeg" alt="Logo" style="height:28px; width:auto; display:block;" />
+          <img :src="logoUrl" alt="Logo" style="height:28px; width:auto; display:block;" />
         </div>
         <div class="text-right">
           <p class="text-white/60 text-[7px] uppercase tracking-widest">Carte de membre</p>
@@ -79,6 +79,7 @@
 import { ref, onMounted, computed } from 'vue'
 import QRCode from 'qrcode'
 import { ArrowLeftIcon, PrinterIcon } from '@heroicons/vue/24/outline'
+import logoUrl from '/public/images/logo.jpeg'
 
 const props = defineProps({ member: Object })
 
