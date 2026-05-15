@@ -156,16 +156,50 @@
                 <CameraIcon class="w-5 h-5 text-[#0d2f6e]" />
                 Recadrer la photo
               </h3>
-              <div class="relative w-full" style="height: 300px; overflow: hidden;">
-                <img ref="cropperImage" :src="rawPreview" style="max-width:100%; display:block;" @load="initCropper" />
+
+              <!-- Zone de recadrage -->
+              <div
+                ref="cropArea"
+                class="relative mx-auto bg-gray-900 select-none overflow-hidden"
+                style="width:280px; height:280px; border-radius:50%; cursor:grab;"
+                @mousedown.prevent="startDrag"
+                @mousemove.prevent="onDrag"
+                @mouseup="stopDrag"
+                @mouseleave="stopDrag"
+                @touchstart.prevent="startDrag"
+                @touchmove.prevent="onDrag"
+                @touchend="stopDrag"
+              >
+                <img
+                  v-if="rawPreview"
+                  :src="rawPreview"
+                  draggable="false"
+                  :style="{
+                    position: 'absolute',
+                    left: imgX + 'px',
+                    top: imgY + 'px',
+                    width: imgW + 'px',
+                    height: imgH + 'px',
+                    pointerEvents: 'none',
+                    userSelect: 'none',
+                  }"
+                />
               </div>
-              <p class="text-xs text-gray-400 mt-3 text-center">Déplacez et zoomez pour cadrer votre visage</p>
+
+              <!-- Zoom -->
+              <div class="mt-4 flex items-center gap-3">
+                <span class="text-xs text-gray-400">Zoom</span>
+                <input type="range" v-model.number="zoomLevel" min="1" max="3" step="0.05"
+                  class="flex-1 accent-[#0d2f6e]" @input="applyZoom" />
+              </div>
+              <p class="text-xs text-gray-400 mt-1 text-center">Glissez l'image pour cadrer votre visage</p>
+
               <div class="flex gap-3 mt-4">
                 <button @click="annulerCrop" class="flex-1 border border-gray-200 text-gray-600 py-2 rounded-xl text-sm hover:bg-gray-50 transition">
                   Annuler
                 </button>
                 <button @click="validerCrop" class="flex-1 bg-[#0d2f6e] text-white py-2 rounded-xl text-sm font-semibold hover:bg-blue-900 transition">
-                  Valider le recadrage
+                  Valider
                 </button>
               </div>
             </div>
@@ -231,8 +265,7 @@
 <script setup>
 import MainLayout from '@/Layouts/MainLayout.vue'
 import { Link, usePage, useForm } from '@inertiajs/vue3'
-import { computed, ref, nextTick, watch } from 'vue'
-import Cropper from 'cropperjs'
+import { computed, ref } from 'vue'
 import {
   UserIcon, BanknotesIcon, Cog6ToothIcon, PencilSquareIcon,
   CalendarDaysIcon, MusicalNoteIcon, ExclamationTriangleIcon, IdentificationIcon,
@@ -247,73 +280,120 @@ const initiales = computed(() => {
   return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
 })
 
+const CROP_SIZE = 280
+
 const showCropper = ref(false)
 const rawPreview = ref(null)
 const croppedPreview = ref(null)
 const croppedBlob = ref(null)
-const cropperImage = ref(null)
 const photoForm = useForm({ photo: null })
-let cropperInstance = null
+const cropArea = ref(null)
 
-// Dès que l'élément img est monté dans le DOM (v-if), on lance le cropper
-watch(cropperImage, (img) => {
-  if (!img || !rawPreview.value) return
-  if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null }
-  const setup = () => {
-    cropperInstance = new Cropper(img, {
-      aspectRatio: 1,
-      viewMode: 1,
-      dragMode: 'move',
-      cropBoxResizable: false,
-      cropBoxMovable: false,
-      toggleDragModeOnDblclick: false,
-      background: false,
-      ready() {
-        const container = cropperInstance.getContainerData()
-        const size = Math.min(container.width, container.height) * 0.8
-        cropperInstance.setCropBoxData({
-          left: (container.width - size) / 2,
-          top: (container.height - size) / 2,
-          width: size,
-          height: size,
-        })
-      },
-    })
-  }
-  if (img.complete && img.naturalWidth > 0) {
-    setup()
-  } else {
-    img.addEventListener('load', setup, { once: true })
-  }
-})
+// Position et taille de l'image dans la zone de recadrage
+const imgX = ref(0)
+const imgY = ref(0)
+const imgW = ref(0)
+const imgH = ref(0)
+const zoomLevel = ref(1)
+let baseW = 0
+let baseH = 0
+
+// Drag
+let dragging = false
+let dragStartX = 0
+let dragStartY = 0
+let dragStartImgX = 0
+let dragStartImgY = 0
 
 function onPhotoChange(e) {
   const file = e.target.files[0]
   if (!file) return
-  if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null }
-  rawPreview.value = URL.createObjectURL(file)
-  showCropper.value = true
+  const url = URL.createObjectURL(file)
+  rawPreview.value = url
+  // Charger les dimensions de l'image
+  const img = new Image()
+  img.onload = () => {
+    const ratio = img.naturalWidth / img.naturalHeight
+    if (ratio >= 1) {
+      baseH = CROP_SIZE
+      baseW = baseH * ratio
+    } else {
+      baseW = CROP_SIZE
+      baseH = baseW / ratio
+    }
+    imgW.value = baseW
+    imgH.value = baseH
+    imgX.value = (CROP_SIZE - baseW) / 2
+    imgY.value = (CROP_SIZE - baseH) / 2
+    zoomLevel.value = 1
+    showCropper.value = true
+  }
+  img.src = url
 }
 
-function initCropper() {} // gardé pour @load dans le template, non utilisé
+function applyZoom() {
+  const newW = baseW * zoomLevel.value
+  const newH = baseH * zoomLevel.value
+  const cx = imgX.value + imgW.value / 2
+  const cy = imgY.value + imgH.value / 2
+  imgX.value = cx - newW / 2
+  imgY.value = cy - newH / 2
+  imgW.value = newW
+  imgH.value = newH
+}
+
+function getEventPos(e) {
+  if (e.touches) return { x: e.touches[0].clientX, y: e.touches[0].clientY }
+  return { x: e.clientX, y: e.clientY }
+}
+
+function startDrag(e) {
+  dragging = true
+  const pos = getEventPos(e)
+  dragStartX = pos.x
+  dragStartY = pos.y
+  dragStartImgX = imgX.value
+  dragStartImgY = imgY.value
+  if (cropArea.value) cropArea.value.style.cursor = 'grabbing'
+}
+
+function onDrag(e) {
+  if (!dragging) return
+  const pos = getEventPos(e)
+  imgX.value = dragStartImgX + (pos.x - dragStartX)
+  imgY.value = dragStartImgY + (pos.y - dragStartY)
+}
+
+function stopDrag() {
+  dragging = false
+  if (cropArea.value) cropArea.value.style.cursor = 'grab'
+}
 
 function validerCrop() {
-  if (!cropperInstance) return
-  const canvas = cropperInstance.getCroppedCanvas({ width: 400, height: 400 })
-  if (!canvas) return
-  canvas.toBlob(blob => {
-    if (!blob) return
-    croppedBlob.value = blob
-    croppedPreview.value = URL.createObjectURL(blob)
-    showCropper.value = false
-    cropperInstance.destroy()
-    cropperInstance = null
-  }, 'image/jpeg', 0.9)
+  const canvas = document.createElement('canvas')
+  canvas.width = 400
+  canvas.height = 400
+  const ctx = canvas.getContext('2d')
+  const img = new Image()
+  img.onload = () => {
+    const scaleX = img.naturalWidth / imgW.value
+    const scaleY = img.naturalHeight / imgH.value
+    const sx = -imgX.value * scaleX
+    const sy = -imgY.value * scaleY
+    const sw = CROP_SIZE * scaleX
+    const sh = CROP_SIZE * scaleY
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 400, 400)
+    canvas.toBlob(blob => {
+      croppedBlob.value = blob
+      croppedPreview.value = URL.createObjectURL(blob)
+      showCropper.value = false
+    }, 'image/jpeg', 0.9)
+  }
+  img.src = rawPreview.value
 }
 
 function annulerCrop() {
   showCropper.value = false
-  if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null }
 }
 
 function uploadPhoto() {
