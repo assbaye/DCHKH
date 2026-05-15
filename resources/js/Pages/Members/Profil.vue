@@ -156,8 +156,8 @@
                 <CameraIcon class="w-5 h-5 text-[#0d2f6e]" />
                 Recadrer la photo
               </h3>
-              <div class="relative w-full" style="height: 300px;">
-                <img ref="cropperImage" :src="rawPreview" class="max-w-full" />
+              <div class="relative w-full" style="height: 300px; overflow: hidden;">
+                <img ref="cropperImage" :src="rawPreview" style="max-width:100%; display:block;" @load="initCropper" />
               </div>
               <p class="text-xs text-gray-400 mt-3 text-center">Déplacez et zoomez pour cadrer votre visage</p>
               <div class="flex gap-3 mt-4">
@@ -258,24 +258,42 @@ let cropperInstance = null
 function onPhotoChange(e) {
   const file = e.target.files[0]
   if (!file) return
+  if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null }
   rawPreview.value = URL.createObjectURL(file)
   showCropper.value = true
-  nextTick(() => {
-    if (cropperInstance) cropperInstance.destroy()
-    cropperInstance = new Cropper(cropperImage.value, {
-      aspectRatio: 1,
-      viewMode: 1,
-      dragMode: 'move',
-      cropBoxResizable: false,
-      cropBoxMovable: false,
-      toggleDragModeOnDblclick: false,
-      background: false,
-    })
+}
+
+function initCropper() {
+  if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null }
+  cropperInstance = new Cropper(cropperImage.value, {
+    aspectRatio: 1,
+    viewMode: 1,
+    dragMode: 'move',
+    cropBoxResizable: false,
+    cropBoxMovable: false,
+    toggleDragModeOnDblclick: false,
+    background: false,
+    ready() {
+      // Centrer la cropbox
+      const data = cropperInstance.getCropBoxData()
+      const container = cropperInstance.getContainerData()
+      const size = Math.min(container.width, container.height) * 0.8
+      cropperInstance.setCropBoxData({
+        left: (container.width - size) / 2,
+        top: (container.height - size) / 2,
+        width: size,
+        height: size,
+      })
+    }
   })
 }
 
 function validerCrop() {
-  cropperInstance.getCroppedCanvas({ width: 400, height: 400 }).toBlob(blob => {
+  if (!cropperInstance) return
+  const canvas = cropperInstance.getCroppedCanvas({ width: 400, height: 400 })
+  if (!canvas) return
+  canvas.toBlob(blob => {
+    if (!blob) return
     croppedBlob.value = blob
     croppedPreview.value = URL.createObjectURL(blob)
     showCropper.value = false
