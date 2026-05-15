@@ -29,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/membres', [MemberController::class, 'index'])->name('members.index');
     Route::get('/membres/{member}', [MemberController::class, 'show'])->name('members.show');
     Route::get('/ma-carte', [MemberController::class, 'maCarteShow'])->name('member.card');
+    Route::post('/profil/photo', [MemberController::class, 'updatePhoto'])->name('member.photo.update');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

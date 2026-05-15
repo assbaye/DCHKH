@@ -57,6 +57,25 @@ class MemberController extends Controller
         return inertia('Members/Card', ['member' => $member]);
     }
 
+    public function updatePhoto(\Illuminate\Http\Request $request)
+    {
+        $member = auth()->user()?->member;
+        if (!$member) abort(404);
+
+        $request->validate([
+            'photo' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        if ($member->photo) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($member->photo);
+        }
+
+        $path = $request->file('photo')->store('members', 'public');
+        $member->update(['photo' => $path]);
+
+        return back()->with('success', 'Photo mise à jour.');
+    }
+
     public function create() {}
     public function store(Request $request) {}
     public function show(Member $member)

@@ -111,6 +111,44 @@
 
         <!-- Colonne droite -->
         <div class="space-y-6">
+
+          <!-- Photo de profil -->
+          <div v-if="member" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <CameraIcon class="w-5 h-5 text-[#0d2f6e]" />
+              Photo de profil
+            </h2>
+            <div class="flex items-center gap-5">
+              <!-- Aperçu -->
+              <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-[#c9973a] flex-shrink-0 bg-[#0d2f6e]">
+                <img v-if="photoPreview" :src="photoPreview" class="w-full h-full object-cover" />
+                <img v-else-if="member.photo" :src="`/storage/${member.photo}`" class="w-full h-full object-cover" />
+                <div v-else class="w-full h-full flex items-center justify-center text-xl font-bold text-white">
+                  {{ initiales }}
+                </div>
+              </div>
+              <!-- Upload -->
+              <div class="flex-1">
+                <label class="cursor-pointer inline-flex items-center gap-2 border border-dashed border-gray-300 text-gray-500 hover:border-[#0d2f6e] hover:text-[#0d2f6e] px-4 py-2 rounded-lg text-sm transition">
+                  <ArrowUpTrayIcon class="w-4 h-4" />
+                  Choisir une photo
+                  <input type="file" accept="image/*" class="hidden" @change="onPhotoChange" />
+                </label>
+                <p class="text-xs text-gray-400 mt-1.5">JPG, PNG, WEBP — max 2 Mo</p>
+                <button
+                  v-if="photoFile"
+                  @click="uploadPhoto"
+                  :disabled="photoForm.processing"
+                  class="mt-2 inline-flex items-center gap-2 bg-[#0d2f6e] text-white px-4 py-1.5 rounded-lg text-sm hover:bg-blue-900 transition disabled:opacity-60"
+                >
+                  <CheckIcon class="w-4 h-4" />
+                  {{ photoForm.processing ? 'Envoi...' : 'Enregistrer la photo' }}
+                </button>
+                <p v-if="photoForm.errors.photo" class="text-red-500 text-xs mt-1">{{ photoForm.errors.photo }}</p>
+              </div>
+            </div>
+          </div>
+
           <!-- Compte -->
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <h2 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -170,11 +208,12 @@
 
 <script setup>
 import MainLayout from '@/Layouts/MainLayout.vue'
-import { Link, usePage } from '@inertiajs/vue3'
-import { computed } from 'vue'
+import { Link, usePage, useForm } from '@inertiajs/vue3'
+import { computed, ref } from 'vue'
 import {
   UserIcon, BanknotesIcon, Cog6ToothIcon, PencilSquareIcon,
   CalendarDaysIcon, MusicalNoteIcon, ExclamationTriangleIcon, IdentificationIcon,
+  CameraIcon, ArrowUpTrayIcon, CheckIcon,
 } from '@heroicons/vue/24/outline'
 
 const props = defineProps({ member: Object })
@@ -184,6 +223,25 @@ const initiales = computed(() => {
   const name = page.props.auth.user?.name || ''
   return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
 })
+
+const photoFile = ref(null)
+const photoPreview = ref(null)
+const photoForm = useForm({ photo: null })
+
+function onPhotoChange(e) {
+  const file = e.target.files[0]
+  if (!file) return
+  photoFile.value = file
+  photoPreview.value = URL.createObjectURL(file)
+}
+
+function uploadPhoto() {
+  photoForm.photo = photoFile.value
+  photoForm.post(route('member.photo.update'), {
+    forceFormData: true,
+    onSuccess: () => { photoFile.value = null },
+  })
+}
 
 const totalCotisations = computed(() =>
   props.member?.cotisations?.reduce((sum, c) => sum + parseFloat(c.montant || 0), 0) ?? 0
