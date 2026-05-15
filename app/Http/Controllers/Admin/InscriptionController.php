@@ -27,6 +27,7 @@ class InscriptionController extends Controller
                 'user_id'       => $user->id,
                 'prenom'        => $parts[0],
                 'nom'           => $parts[1] ?? $parts[0],
+                'telephone'     => $user->telephone,
                 'date_adhesion' => now()->toDateString(),
                 'statut'        => 'actif',
                 'role'          => 'membre',

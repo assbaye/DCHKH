@@ -127,10 +127,16 @@
                 <p class="text-gray-800 font-medium break-all">{{ $page.props.auth.user.email }}</p>
               </div>
             </div>
-            <Link :href="route('profile.edit')" class="mt-5 w-full inline-flex items-center justify-center gap-2 border border-gray-200 text-gray-600 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition">
-              <PencilSquareIcon class="w-4 h-4" />
-              Modifier le compte
-            </Link>
+            <div class="mt-5 flex flex-col gap-2">
+              <Link :href="route('profile.edit')" class="w-full inline-flex items-center justify-center gap-2 border border-gray-200 text-gray-600 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition">
+                <PencilSquareIcon class="w-4 h-4" />
+                Modifier le compte
+              </Link>
+              <Link v-if="member" :href="route('member.card')" class="w-full inline-flex items-center justify-center gap-2 border border-[#0d2f6e]/30 text-[#0d2f6e] px-4 py-2 rounded-lg text-sm hover:bg-[#0d2f6e] hover:text-white transition">
+                <IdentificationIcon class="w-4 h-4" />
+                Ma carte membre
+              </Link>
+            </div>
           </div>
 
           <!-- Stat cotisation -->
@@ -168,7 +174,7 @@ import { Link, usePage } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import {
   UserIcon, BanknotesIcon, Cog6ToothIcon, PencilSquareIcon,
-  CalendarDaysIcon, MusicalNoteIcon, ExclamationTriangleIcon,
+  CalendarDaysIcon, MusicalNoteIcon, ExclamationTriangleIcon, IdentificationIcon,
 } from '@heroicons/vue/24/outline'
 
 const props = defineProps({ member: Object })

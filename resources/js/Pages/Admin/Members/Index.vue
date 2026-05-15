@@ -57,6 +57,9 @@
             </td>
             <td class="px-5 py-4">
               <div class="flex justify-end items-center gap-2">
+                <Link :href="route('admin.membres.card', m.id)" class="inline-flex items-center gap-1.5 text-xs bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition">
+                  <IdentificationIcon class="w-3.5 h-3.5" /> Carte
+                </Link>
                 <Link :href="route('admin.membres.edit', m.id)" class="inline-flex items-center gap-1.5 text-xs bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition">
                   <PencilSquareIcon class="w-3.5 h-3.5" /> Modifier
                 </Link>
@@ -94,7 +97,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue'
 import ConfirmModal from '@/Components/ConfirmModal.vue'
 import { Link, router } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import { MagnifyingGlassIcon, UserPlusIcon, PencilSquareIcon, TrashIcon, UsersIcon } from '@heroicons/vue/24/outline'
+import { MagnifyingGlassIcon, UserPlusIcon, PencilSquareIcon, TrashIcon, UsersIcon, IdentificationIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({ membres: Object, filters: Object })
 const search = ref(props.filters?.search || '')

@@ -24,6 +24,7 @@
         <div class="flex-1 min-w-0">
           <h3 class="font-bold text-gray-800">{{ user.name }}</h3>
           <p class="text-sm text-gray-500">{{ user.email }}</p>
+          <p v-if="user.telephone" class="text-sm text-gray-500">{{ user.telephone }}</p>
           <p class="text-xs text-gray-400 mt-1 flex items-center gap-1">
             <ClockIcon class="w-3.5 h-3.5" />
             Inscrit le {{ formatDate(user.created_at) }}

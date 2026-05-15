@@ -45,9 +45,28 @@ class MemberController extends Controller
         return inertia('Members/Profil', ['member' => $member]);
     }
 
+    public function maCarteShow()
+    {
+        $member = auth()->user()?->member;
+        if (!$member) abort(404);
+        return inertia('Members/Card', ['member' => $member]);
+    }
+
+    public function carteAdmin(Member $member)
+    {
+        return inertia('Members/Card', ['member' => $member]);
+    }
+
     public function create() {}
     public function store(Request $request) {}
-    public function show(string $id) {}
+    public function show(Member $member)
+    {
+        if ($member->statut !== 'actif') {
+            abort(404);
+        }
+        $member->load('cotisations.collection');
+        return inertia('Members/Show', ['member' => $member]);
+    }
     public function edit(string $id) {}
     public function update(Request $request, string $id) {}
     public function destroy(string $id) {}

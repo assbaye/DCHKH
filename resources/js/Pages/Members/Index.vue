@@ -97,6 +97,13 @@
             <span class="mt-3 text-[11px] px-2.5 py-0.5 rounded-full font-semibold" :class="roleCouleur(m.role)">
               {{ m.role }}
             </span>
+
+            <Link
+              :href="route('members.show', m.id)"
+              class="mt-3 text-[11px] px-3 py-1 rounded-lg border border-[#0d2f6e]/20 text-[#0d2f6e] hover:bg-[#0d2f6e] hover:text-white transition font-medium"
+            >
+              Voir profil
+            </Link>
           </div>
         </div>
       </div>

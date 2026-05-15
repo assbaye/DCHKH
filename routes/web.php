@@ -27,11 +27,16 @@ Route::get('/cotisations', [CotisationController::class, 'index'])->name('cotisa
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profil', [MemberController::class, 'profil'])->name('member.profil');
     Route::get('/membres', [MemberController::class, 'index'])->name('members.index');
+    Route::get('/membres/{member}', [MemberController::class, 'show'])->name('members.show');
+    Route::get('/ma-carte', [MemberController::class, 'maCarteShow'])->name('member.card');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Carte membre admin (générer la carte de n'importe quel membre)
+Route::middleware(['auth', 'admin'])->get('/admin/membres/{member}/carte', [MemberController::class, 'carteAdmin'])->name('admin.membres.card');
 
 // Routes admin
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
