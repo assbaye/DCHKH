@@ -261,9 +261,18 @@ function onPhotoChange(e) {
   if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null }
   rawPreview.value = URL.createObjectURL(file)
   showCropper.value = true
+  nextTick(() => {
+    const img = cropperImage.value
+    if (!img) return
+    if (img.complete && img.naturalWidth > 0) {
+      initCropper()
+    }
+    // sinon @load sur l'image appellera initCropper
+  })
 }
 
 function initCropper() {
+  if (!cropperImage.value) return
   if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null }
   cropperInstance = new Cropper(cropperImage.value, {
     aspectRatio: 1,
@@ -274,8 +283,6 @@ function initCropper() {
     toggleDragModeOnDblclick: false,
     background: false,
     ready() {
-      // Centrer la cropbox
-      const data = cropperInstance.getCropBoxData()
       const container = cropperInstance.getContainerData()
       const size = Math.min(container.width, container.height) * 0.8
       cropperInstance.setCropBoxData({
