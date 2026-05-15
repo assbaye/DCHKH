@@ -16,7 +16,7 @@
       <!-- Bandeau haut -->
       <div class="card-header">
         <div class="card-header-logo">
-          <img src="/images/logo.jpeg" alt="Logo" style="height:28px; width:auto; display:block;" />
+          <img src="/images/logo.jpeg" alt="Logo" class="card-logo-img" />
         </div>
         <div class="text-right">
           <p class="text-white/60 text-[7px] uppercase tracking-widest">Carte de membre</p>
@@ -123,6 +123,15 @@ function goBack() { window.history.back() }
 .card-header-logo {
   display: flex;
   align-items: center;
+}
+
+.card-logo-img {
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(201, 151, 58, 0.8);
+  display: block;
 }
 
 .card-body {
