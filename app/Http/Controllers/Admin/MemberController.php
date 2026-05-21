@@ -48,7 +48,7 @@ class MemberController extends Controller
 
     public function edit(Member $membre)
     {
-        return inertia('Admin/Members/Form', ['membre' => $membre, 'roles' => ['membre', 'moderateur', 'admin']]);
+        return inertia('Admin/Members/Form', ['membre' => $membre, 'roles' => ['membre', 'secretaire', 'tresorier', 'admin']]);
     }
 
     public function update(Request $request, Member $membre)
