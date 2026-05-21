@@ -110,7 +110,7 @@ function filtrer() {
 }
 function formatDate(d) { return d ? new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '—' }
 function roleBadge(r) {
-  return { admin: 'bg-red-100 text-red-700', moderateur: 'bg-purple-100 text-purple-700', membre: 'bg-blue-100 text-blue-700' }[r] ?? 'bg-gray-100 text-gray-600'
+  return { admin: 'bg-red-100 text-red-700', secretaire: 'bg-purple-100 text-purple-700', tresorier: 'bg-green-100 text-green-700', membre: 'bg-blue-100 text-blue-700' }[r] ?? 'bg-gray-100 text-gray-600'
 }
 function supprimer(m) { itemASupprimer.value = m; confirmModal.value = true }
 function confirmerSuppression() {

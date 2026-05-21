@@ -25,7 +25,7 @@ class MemberController extends Controller
 
     public function create()
     {
-        return inertia('Admin/Members/Form', ['roles' => ['membre', 'moderateur', 'admin']]);
+        return inertia('Admin/Members/Form', ['roles' => ['membre', 'secretaire', 'tresorier', 'admin']]);
     }
 
     public function store(Request $request)
@@ -38,7 +38,7 @@ class MemberController extends Controller
             'ville'         => 'nullable|string|max:100',
             'date_adhesion' => 'required|date',
             'statut'        => 'required|in:actif,inactif',
-            'role'          => 'required|in:membre,moderateur,admin',
+            'role'          => 'required|in:membre,secretaire,tresorier,admin',
         ]);
         Member::create($data);
         return redirect()->route('admin.membres.index')->with('success', 'Membre ajouté avec succès.');
@@ -61,7 +61,7 @@ class MemberController extends Controller
             'ville'         => 'nullable|string|max:100',
             'date_adhesion' => 'required|date',
             'statut'        => 'required|in:actif,inactif',
-            'role'          => 'required|in:membre,moderateur,admin',
+            'role'          => 'required|in:membre,secretaire,tresorier,admin',
         ]);
         $membre->update($data);
         return redirect()->route('admin.membres.index')->with('success', 'Membre mis à jour.');

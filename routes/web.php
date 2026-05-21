@@ -6,6 +6,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\KhassaideController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\CotisationController;
+use App\Http\Controllers\ReunionController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\InscriptionController as AdminInscriptionController;
@@ -24,6 +25,12 @@ Route::get('/khassaides/{khassaide}', [KhassaideController::class, 'show'])->nam
 Route::get('/galerie', [GalleryController::class, 'index'])->name('gallery.index');
 Route::get('/galerie/{album}', [GalleryController::class, 'show'])->name('gallery.show');
 Route::get('/cotisations', [CotisationController::class, 'index'])->name('cotisations.index');
+
+// Réunions (membres connectés)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/reunions', [ReunionController::class, 'index'])->name('reunions.index');
+    Route::get('/reunions/{reunion}', [ReunionController::class, 'show'])->name('reunions.show');
+});
 
 // Routes membres (authentifiés)
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -54,6 +61,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('khassaides', Admin\KhassaideController::class);
     Route::resource('galerie', Admin\GalleryController::class);
     Route::resource('albums', AdminAlbumController::class);
+    Route::resource('reunions', Admin\ReunionController::class);
     Route::resource('collections', Admin\CollectionController::class);
     Route::resource('cotisations', Admin\CotisationController::class);
 });

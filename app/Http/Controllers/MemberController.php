@@ -28,7 +28,8 @@ class MemberController extends Controller
         $stats = [
             'total'       => Member::where('statut', 'actif')->count(),
             'admins'      => Member::where('role', 'admin')->count(),
-            'moderateurs' => Member::where('role', 'moderateur')->count(),
+            'secretaires' => Member::where('role', 'secretaire')->count(),
+            'tresoriers'  => Member::where('role', 'tresorier')->count(),
         ];
 
         return inertia('Members/Index', [

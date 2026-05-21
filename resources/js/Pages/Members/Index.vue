@@ -18,9 +18,13 @@
             <span class="text-2xl font-bold text-[#0d2f6e]">{{ stats.total }}</span>
             <span class="text-[11px] text-gray-500 mt-0.5 whitespace-nowrap">Actifs</span>
           </div>
-          <div class="flex flex-col items-center justify-center bg-blue-50 rounded-2xl px-5 py-3 min-w-[72px]">
-            <span class="text-2xl font-bold text-blue-600">{{ stats.moderateurs }}</span>
-            <span class="text-[11px] text-gray-500 mt-0.5 whitespace-nowrap">Modérateurs</span>
+          <div class="flex flex-col items-center justify-center bg-purple-50 rounded-2xl px-5 py-3 min-w-[72px]">
+            <span class="text-2xl font-bold text-purple-600">{{ stats.secretaires }}</span>
+            <span class="text-[11px] text-gray-500 mt-0.5 whitespace-nowrap">Secrétaires</span>
+          </div>
+          <div class="flex flex-col items-center justify-center bg-green-50 rounded-2xl px-5 py-3 min-w-[72px]">
+            <span class="text-2xl font-bold text-green-600">{{ stats.tresoriers }}</span>
+            <span class="text-[11px] text-gray-500 mt-0.5 whitespace-nowrap">Trésoriers</span>
           </div>
           <div class="flex flex-col items-center justify-center bg-amber-50 rounded-2xl px-5 py-3 min-w-[72px]">
             <span class="text-2xl font-bold text-amber-600">{{ stats.admins }}</span>
@@ -161,7 +165,8 @@ const filtreRole = ref(props.filtre_role || '')
 const roles = [
   { value: '', label: 'Tous' },
   { value: 'membre', label: 'Membres' },
-  { value: 'moderateur', label: 'Modérateurs' },
+  { value: 'secretaire', label: 'Secrétaires' },
+  { value: 'tresorier', label: 'Trésoriers' },
   { value: 'admin', label: 'Admins' },
 ]
 
@@ -189,7 +194,8 @@ function initiales(m) {
 
 function roleCouleur(role) {
   if (role === 'admin') return 'bg-amber-100 text-amber-700'
-  if (role === 'moderateur') return 'bg-blue-100 text-blue-700'
+  if (role === 'secretaire') return 'bg-purple-100 text-purple-700'
+  if (role === 'tresorier') return 'bg-green-100 text-green-700'
   return 'bg-gray-100 text-gray-500'
 }
 </script>

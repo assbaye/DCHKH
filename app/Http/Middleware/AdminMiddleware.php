@@ -16,7 +16,7 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $member = $request->user()?->member;
-        if (!$member || !in_array($member->role, ['admin', 'moderateur'])) {
+        if (!$member || !in_array($member->role, ['admin', 'secretaire', 'tresorier'])) {
             abort(403, 'Accès réservé aux administrateurs.');
         }
         return $next($request);

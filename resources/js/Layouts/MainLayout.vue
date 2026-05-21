@@ -33,6 +33,9 @@
             <NavLink :href="route('cotisations.index')" :active="$page.component.startsWith('Cotisations')">
               <BanknotesIcon class="w-4 h-4 mr-1 inline" />Cotisations
             </NavLink>
+            <NavLink v-if="$page.props.auth.user" :href="route('reunions.index')" :active="$page.component.startsWith('Reunions')">
+              <ClipboardIcon class="w-4 h-4 mr-1 inline" />Réunions
+            </NavLink>
           </div>
 
           <!-- Auth + burger -->
@@ -87,6 +90,9 @@
         </Link>
         <Link :href="route('cotisations.index')" @click="mobileOpen = false" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm transition" :class="$page.component.startsWith('Cotisations') ? 'bg-[#0d2f6e] text-white font-semibold' : 'text-blue-200 hover:bg-blue-800 hover:text-white'">
           <BanknotesIcon class="w-4 h-4" /> Cotisations
+        </Link>
+        <Link v-if="$page.props.auth.user" :href="route('reunions.index')" @click="mobileOpen = false" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm transition" :class="$page.component.startsWith('Reunions') ? 'bg-[#0d2f6e] text-white font-semibold' : 'text-blue-200 hover:bg-blue-800 hover:text-white'">
+          <ClipboardIcon class="w-4 h-4" /> Réunions
         </Link>
 
         <div class="border-t border-blue-800 pt-2 mt-2 space-y-1">
@@ -158,14 +164,14 @@ import NavLink from '@/Components/NavLink.vue'
 import {
   HomeIcon, CalendarDaysIcon, MusicalNoteIcon, PhotoIcon, BanknotesIcon,
   UserCircleIcon, UserPlusIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon,
-  ArrowLeftOnRectangleIcon, MapPinIcon, Bars3Icon, XMarkIcon,
+  ArrowLeftOnRectangleIcon, MapPinIcon, Bars3Icon, XMarkIcon, ClipboardIcon,
 } from '@heroicons/vue/24/outline'
 
 const page = usePage()
 const mobileOpen = ref(false)
 const isAdmin = computed(() => {
   const member = page.props.auth?.user?.member
-  return member && ['admin', 'moderateur'].includes(member.role)
+  return member && ['admin', 'secretaire', 'tresorier'].includes(member.role)
 })
 
 
