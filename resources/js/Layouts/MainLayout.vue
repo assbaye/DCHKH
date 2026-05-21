@@ -170,9 +170,9 @@ import {
 const page = usePage()
 const mobileOpen = ref(false)
 const userRole = computed(() => page.props.auth?.user?.member?.role)
-const isAdmin = computed(() => ['admin', 'secretaire', 'tresorier'].includes(userRole.value))
+const isAdmin = computed(() => ['admin', 'secretaire', 'tresorier', 'gestionnaire'].includes(userRole.value))
 const roleLabel = computed(() => {
-  const labels = { admin: 'Admin', secretaire: 'Secrétaire', tresorier: 'Trésorier' }
+  const labels = { admin: 'Admin', secretaire: 'Secrétaire', tresorier: 'Trésorier', gestionnaire: 'Gestionnaire' }
   return labels[userRole.value] ?? 'Admin'
 })
 

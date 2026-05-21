@@ -42,9 +42,12 @@
           <AdminNavLink :href="route('admin.collections.index')" :icon="BanknotesIcon"             @click="sidebarOpen = false">Collections</AdminNavLink>
         </template>
 
-        <AdminNavLink v-if="isAdmin || isSecretaire" :href="route('admin.reunions.index')"   :icon="ClipboardIcon"              @click="sidebarOpen = false">Réunions</AdminNavLink>
-        <AdminNavLink v-if="isAdmin || isTresorier"  :href="route('admin.cotisations.index')" :icon="ClipboardDocumentListIcon" @click="sidebarOpen = false">Cotisations</AdminNavLink>
-        <AdminNavLink :href="route('admin.sms.index')" :icon="DevicePhoneMobileIcon" @click="sidebarOpen = false">SMS</AdminNavLink>
+        <AdminNavLink v-if="isAdmin || isSecretaire"   :href="route('admin.reunions.index')"    :icon="ClipboardIcon"              @click="sidebarOpen = false">Réunions</AdminNavLink>
+        <AdminNavLink v-if="isAdmin || isTresorier"    :href="route('admin.cotisations.index')"  :icon="ClipboardDocumentListIcon"  @click="sidebarOpen = false">Cotisations</AdminNavLink>
+        <AdminNavLink v-if="isAdmin || isGestionnaire" :href="route('admin.materiels.index')"    :icon="CubeIcon"                   @click="sidebarOpen = false">Matériels</AdminNavLink>
+        <AdminNavLink v-if="isAdmin || isGestionnaire" :href="route('admin.emprunts.index')"     :icon="ArrowsRightLeftIcon"        @click="sidebarOpen = false">Emprunts</AdminNavLink>
+        <AdminNavLink v-if="isAdmin || isGestionnaire" :href="route('admin.maintenances.index')" :icon="WrenchScrewdriverIcon"      @click="sidebarOpen = false">Maintenances</AdminNavLink>
+        <AdminNavLink :href="route('admin.sms.index')" :icon="DevicePhoneMobileIcon"             @click="sidebarOpen = false">SMS</AdminNavLink>
       </nav>
 
       <div class="p-4 border-t border-blue-800 space-y-2">
@@ -90,16 +93,17 @@ import {
   ChartBarIcon, UsersIcon, UserPlusIcon, CalendarDaysIcon, MusicalNoteIcon,
   PhotoIcon, BanknotesIcon, ClipboardDocumentListIcon, ArrowLeftIcon,
   ArrowRightOnRectangleIcon, UserCircleIcon, Bars3Icon, XMarkIcon, FolderOpenIcon,
-  ClipboardIcon, DevicePhoneMobileIcon,
+  ClipboardIcon, DevicePhoneMobileIcon, CubeIcon, ArrowsRightLeftIcon, WrenchScrewdriverIcon,
 } from '@heroicons/vue/24/outline'
 
 defineProps({ title: { type: String, default: 'Administration' } })
 
 const page = usePage()
 const userRole = computed(() => page.props.auth?.user?.member?.role)
-const isAdmin      = computed(() => userRole.value === 'admin')
-const isSecretaire = computed(() => userRole.value === 'secretaire')
-const isTresorier  = computed(() => userRole.value === 'tresorier')
+const isAdmin        = computed(() => userRole.value === 'admin')
+const isSecretaire   = computed(() => userRole.value === 'secretaire')
+const isTresorier    = computed(() => userRole.value === 'tresorier')
+const isGestionnaire = computed(() => userRole.value === 'gestionnaire')
 
 const sidebarOpen = ref(false)
 </script>

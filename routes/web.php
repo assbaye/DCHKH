@@ -75,6 +75,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // SMS — accessible à tous les rôles du panel
     Route::post('sms/envoyer', [Admin\SmsController::class, 'envoyer'])->name('sms.envoyer');
     Route::get('sms/historique', [Admin\SmsController::class, 'index'])->name('sms.index');
+
+    // Matériels — gestionnaire + admin
+    Route::middleware('gestionnaire')->group(function () {
+        Route::resource('materiels', Admin\MaterielController::class);
+        Route::resource('emprunts', Admin\EmpruntController::class);
+        Route::patch('emprunts/{emprunt}/retour', [Admin\EmpruntController::class, 'retour'])->name('emprunts.retour');
+        Route::resource('maintenances', Admin\MaintenanceController::class);
+    });
 });
 
 require __DIR__.'/auth.php';

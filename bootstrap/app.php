@@ -17,10 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'admin'      => \App\Http\Middleware\AdminMiddleware::class,
-            'admin.only' => \App\Http\Middleware\AdminOnlyMiddleware::class,
-            'secretaire' => \App\Http\Middleware\SecretaireMiddleware::class,
-            'tresorier'  => \App\Http\Middleware\TresorierMiddleware::class,
+            'admin'        => \App\Http\Middleware\AdminMiddleware::class,
+            'admin.only'   => \App\Http\Middleware\AdminOnlyMiddleware::class,
+            'secretaire'   => \App\Http\Middleware\SecretaireMiddleware::class,
+            'tresorier'    => \App\Http\Middleware\TresorierMiddleware::class,
+            'gestionnaire' => \App\Http\Middleware\GestionnaireMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

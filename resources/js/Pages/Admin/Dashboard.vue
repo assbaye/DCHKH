@@ -195,6 +195,74 @@
       />
     </template>
 
+    <!-- ===== GESTIONNAIRE ===== -->
+    <template v-else-if="isGestionnaire">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <StatCard label="Total matériels"    :value="stats.total_materiels"      :icon="CubeIcon"               color="blue" />
+        <StatCard label="En bon état"        :value="stats.materiels_bon"         :icon="CheckCircleIcon"        color="green" />
+        <StatCard label="Emprunts en cours"  :value="stats.emprunts_en_cours"     :icon="ArrowsRightLeftIcon"    color="amber" />
+        <StatCard label="En retard"          :value="stats.emprunts_en_retard"    :icon="ExclamationTriangleIcon" color="red" />
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl shadow-sm p-6">
+          <div class="flex items-center justify-between mb-5">
+            <h2 class="font-bold text-gray-800 flex items-center gap-2"><ArrowsRightLeftIcon class="w-5 h-5 text-amber-500" />Emprunts en cours</h2>
+            <Link :href="route('admin.emprunts.index')" class="text-[#c9973a] text-sm hover:underline flex items-center gap-1">Voir tout <ArrowRightIcon class="w-3 h-3" /></Link>
+          </div>
+          <div class="space-y-3">
+            <div v-for="e in emprunts_en_cours" :key="e.id" class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                {{ e.membre?.prenom?.[0] }}{{ e.membre?.nom?.[0] }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm font-medium text-gray-800 truncate">{{ e.materiel?.nom }}</div>
+                <div class="text-xs text-gray-400">{{ e.membre?.prenom }} {{ e.membre?.nom }} · retour {{ formatDate(e.date_retour_prevue) }}</div>
+              </div>
+              <span class="px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0"
+                :class="e.statut === 'en_retard' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'">
+                {{ e.statut === 'en_retard' ? 'En retard' : 'En cours' }}
+              </span>
+            </div>
+            <div v-if="!emprunts_en_cours?.length" class="text-gray-400 text-sm text-center py-4">Aucun emprunt en cours</div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm p-6">
+          <div class="flex items-center justify-between mb-5">
+            <h2 class="font-bold text-gray-800 flex items-center gap-2"><WrenchScrewdriverIcon class="w-5 h-5 text-blue-500" />Maintenances actives</h2>
+            <Link :href="route('admin.maintenances.index')" class="text-[#c9973a] text-sm hover:underline flex items-center gap-1">Voir tout <ArrowRightIcon class="w-3 h-3" /></Link>
+          </div>
+          <div class="space-y-3">
+            <div v-for="m in maintenances_actives" :key="m.id" class="flex items-start gap-3">
+              <div class="w-9 h-9 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0">
+                <WrenchScrewdriverIcon class="w-4 h-4" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm font-medium text-gray-800 truncate">{{ m.titre }}</div>
+                <div class="text-xs text-gray-400">{{ m.materiel?.nom }} · {{ formatDate(m.date_maintenance) }}</div>
+              </div>
+              <span class="px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0"
+                :class="m.statut === 'en_cours' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'">
+                {{ m.statut === 'en_cours' ? 'En cours' : 'Planifiée' }}
+              </span>
+            </div>
+            <div v-if="!maintenances_actives?.length" class="text-gray-400 text-sm text-center py-4">Aucune maintenance active</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 bg-white rounded-2xl shadow-sm p-6">
+        <h2 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><BoltIcon class="w-5 h-5 text-yellow-500" />Actions rapides</h2>
+        <div class="flex flex-wrap gap-3">
+          <Link :href="route('admin.materiels.create')" class="inline-flex items-center gap-2 bg-[#0d2f6e] text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-900 transition"><CubeIcon class="w-4 h-4" />Nouveau matériel</Link>
+          <Link :href="route('admin.emprunts.create')" class="inline-flex items-center gap-2 bg-amber-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-amber-600 transition"><ArrowsRightLeftIcon class="w-4 h-4" />Enregistrer emprunt</Link>
+          <Link :href="route('admin.maintenances.create')" class="inline-flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-700 transition"><WrenchScrewdriverIcon class="w-4 h-4" />Nouvelle maintenance</Link>
+          <Link :href="route('admin.materiels.index')" class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition"><CubeIcon class="w-4 h-4" />Inventaire</Link>
+        </div>
+      </div>
+    </template>
+
   </AdminLayout>
 </template>
 
@@ -207,23 +275,27 @@ import {
   UsersIcon, CalendarDaysIcon, MusicalNoteIcon, BanknotesIcon,
   ArrowRightIcon, UserPlusIcon, BoltIcon, ClipboardIcon,
   ClockIcon, CheckCircleIcon, ClipboardDocumentListIcon, DevicePhoneMobileIcon,
+  CubeIcon, ArrowsRightLeftIcon, WrenchScrewdriverIcon, ExclamationTriangleIcon,
 } from '@heroicons/vue/24/outline'
 
 defineProps({
   stats: Object,
-  derniers_membres:      Array,
-  prochains_evenements:  Array,
-  prochaines_reunions:   Array,
-  dernieres_reunions:    Array,
-  dernieres_cotisations: Array,
-  collections_actives:   Array,
+  derniers_membres:       Array,
+  prochains_evenements:   Array,
+  prochaines_reunions:    Array,
+  dernieres_reunions:     Array,
+  dernieres_cotisations:  Array,
+  collections_actives:    Array,
+  emprunts_en_cours:      Array,
+  maintenances_actives:   Array,
 })
 
 const page = usePage()
 const userRole     = computed(() => page.props.auth?.user?.member?.role)
-const isAdmin      = computed(() => userRole.value === 'admin')
-const isSecretaire = computed(() => userRole.value === 'secretaire')
-const isTresorier  = computed(() => userRole.value === 'tresorier')
+const isAdmin        = computed(() => userRole.value === 'admin')
+const isSecretaire   = computed(() => userRole.value === 'secretaire')
+const isTresorier    = computed(() => userRole.value === 'tresorier')
+const isGestionnaire = computed(() => userRole.value === 'gestionnaire')
 
 const smsSecretaire = ref(false)
 const smsTresorier  = ref(false)

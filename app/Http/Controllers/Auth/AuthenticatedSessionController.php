@@ -34,7 +34,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $member = $request->user()->member;
-        if ($member && in_array($member->role, ['admin', 'secretaire', 'tresorier'])) {
+        if ($member && in_array($member->role, ['admin', 'secretaire', 'tresorier', 'gestionnaire'])) {
             return redirect()->intended(route('admin.dashboard'));
         }
 

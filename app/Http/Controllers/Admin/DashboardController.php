@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Collection;
 use App\Models\Cotisation;
+use App\Models\Emprunt;
+use App\Models\Maintenance;
+use App\Models\Materiel;
 use App\Models\Member;
 use App\Models\Reunion;
 
@@ -20,6 +23,10 @@ class DashboardController extends Controller
 
         if ($role === 'tresorier') {
             return $this->dashboardTresorier();
+        }
+
+        if ($role === 'gestionnaire') {
+            return $this->dashboardGestionnaire();
         }
 
         return $this->dashboardAdmin();
@@ -88,5 +95,31 @@ class DashboardController extends Controller
             ->get();
 
         return inertia('Admin/Dashboard', compact('stats', 'dernieres_cotisations', 'collections_actives'));
+    }
+
+    private function dashboardGestionnaire()
+    {
+        $stats = [
+            'total_materiels'   => Materiel::count(),
+            'materiels_bon'     => Materiel::where('etat', 'bon')->count(),
+            'emprunts_en_cours' => Emprunt::whereIn('statut', ['en_cours', 'en_retard'])->count(),
+            'emprunts_en_retard'=> Emprunt::where('statut', 'en_retard')->count(),
+            'maintenances_actives' => Maintenance::whereIn('statut', ['planifiee', 'en_cours'])->count(),
+        ];
+
+        $emprunts_en_cours = Emprunt::with(['materiel', 'membre'])
+            ->whereIn('statut', ['en_cours', 'en_retard'])
+            ->orderByRaw("FIELD(statut,'en_retard','en_cours')")
+            ->orderBy('date_retour_prevue')
+            ->take(6)
+            ->get();
+
+        $maintenances_actives = Maintenance::with('materiel')
+            ->whereIn('statut', ['planifiee', 'en_cours'])
+            ->orderBy('date_maintenance')
+            ->take(5)
+            ->get();
+
+        return inertia('Admin/Dashboard', compact('stats', 'emprunts_en_cours', 'maintenances_actives'));
     }
 }

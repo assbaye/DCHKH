@@ -25,7 +25,7 @@ class MemberController extends Controller
 
     public function create()
     {
-        return inertia('Admin/Members/Form', ['roles' => ['membre', 'secretaire', 'tresorier', 'admin']]);
+        return inertia('Admin/Members/Form', ['roles' => ['membre', 'secretaire', 'tresorier', 'gestionnaire', 'admin']]);
     }
 
     public function store(Request $request)
@@ -48,7 +48,7 @@ class MemberController extends Controller
 
     public function edit(Member $membre)
     {
-        return inertia('Admin/Members/Form', ['membre' => $membre, 'roles' => ['membre', 'secretaire', 'tresorier', 'admin']]);
+        return inertia('Admin/Members/Form', ['membre' => $membre, 'roles' => ['membre', 'secretaire', 'tresorier', 'gestionnaire', 'admin']]);
     }
 
     public function update(Request $request, Member $membre)
