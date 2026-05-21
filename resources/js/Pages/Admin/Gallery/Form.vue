@@ -186,7 +186,7 @@ function clearFiles() {
 
 function soumettre() {
   if (props.item) {
-    form.put(route('admin.galerie.update', props.item.id))
+    form.transform(data => ({ ...data, _method: 'PUT' })).post(route('admin.galerie.update', props.item.id))
   } else {
     form.post(route('admin.galerie.store'))
   }

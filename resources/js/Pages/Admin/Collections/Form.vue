@@ -73,7 +73,7 @@ const form = useForm({
 })
 
 function soumettre() {
-  if (props.collection) form.put(route('admin.collections.update', props.collection.id))
+  if (props.collection) form.transform(data => ({ ...data, _method: 'PUT' })).post(route('admin.collections.update', props.collection.id))
   else form.post(route('admin.collections.store'))
 }
 </script>

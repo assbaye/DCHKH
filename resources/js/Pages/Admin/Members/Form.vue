@@ -77,7 +77,7 @@ const form = useForm({
 })
 
 function soumettre() {
-  if (props.membre) form.put(route('admin.membres.update', props.membre.id))
+  if (props.membre) form.transform(data => ({ ...data, _method: 'PUT' })).post(route('admin.membres.update', props.membre.id))
   else form.post(route('admin.membres.store'))
 }
 </script>

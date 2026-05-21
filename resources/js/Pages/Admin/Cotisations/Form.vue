@@ -73,7 +73,7 @@ const form = useForm({
 })
 
 function soumettre() {
-  if (props.cotisation) form.put(route('admin.cotisations.update', props.cotisation.id))
+  if (props.cotisation) form.transform(data => ({ ...data, _method: 'PUT' })).post(route('admin.cotisations.update', props.cotisation.id))
   else form.post(route('admin.cotisations.store'))
 }
 </script>
