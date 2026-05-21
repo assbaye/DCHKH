@@ -101,7 +101,8 @@ function onDrop(e) {
 
 function soumettre() {
   if (props.album) {
-    form.put(route('admin.albums.update', props.album.id))
+    form.transform(data => ({ ...data, _method: 'PUT' }))
+        .post(route('admin.albums.update', props.album.id))
   } else {
     form.post(route('admin.albums.store'))
   }
