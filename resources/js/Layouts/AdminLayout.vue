@@ -25,30 +25,61 @@
       </div>
 
       <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-        <AdminNavLink :href="route('admin.dashboard')" :icon="ChartBarIcon" @click="sidebarOpen = false">Tableau de bord</AdminNavLink>
 
+        <!-- Tableau de bord -->
+        <AdminNavLink :href="route('admin.dashboard')" :icon="ChartBarIcon" @click="sidebarOpen = false">
+          Tableau de bord
+        </AdminNavLink>
+
+        <!-- Membres (admin) -->
         <template v-if="isAdmin">
-          <AdminNavLink :href="route('admin.inscriptions.index')" :icon="UserPlusIcon" @click="sidebarOpen = false">
-            Inscriptions
-            <span v-if="$page.props.nb_inscriptions > 0" class="ml-auto bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none">
-              {{ $page.props.nb_inscriptions }}
-            </span>
-          </AdminNavLink>
-          <AdminNavLink :href="route('admin.membres.index')"     :icon="UsersIcon"                 @click="sidebarOpen = false">Membres</AdminNavLink>
-          <AdminNavLink :href="route('admin.evenements.index')"  :icon="CalendarDaysIcon"          @click="sidebarOpen = false">Événements</AdminNavLink>
-          <AdminNavLink :href="route('admin.khassaides.index')"  :icon="MusicalNoteIcon"           @click="sidebarOpen = false">Khassaïdes</AdminNavLink>
-          <AdminNavLink :href="route('admin.albums.index')"      :icon="FolderOpenIcon"            @click="sidebarOpen = false">Albums</AdminNavLink>
-          <AdminNavLink :href="route('admin.galerie.index')"     :icon="PhotoIcon"                 @click="sidebarOpen = false">Galerie</AdminNavLink>
-          <AdminNavLink :href="route('admin.collections.index')" :icon="BanknotesIcon"             @click="sidebarOpen = false">Collectes</AdminNavLink>
+          <SidebarGroup label="Membres" :icon="UsersIcon" :open="groupOuvert === 'membres'" @toggle="toggleGroupe('membres')">
+            <AdminNavLink :href="route('admin.inscriptions.index')" :icon="UserPlusIcon" @click="sidebarOpen = false" :indent="true">
+              Inscriptions
+              <span v-if="$page.props.nb_inscriptions > 0" class="ml-auto bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none">
+                {{ $page.props.nb_inscriptions }}
+              </span>
+            </AdminNavLink>
+            <AdminNavLink :href="route('admin.membres.index')" :icon="UsersIcon" @click="sidebarOpen = false" :indent="true">Membres</AdminNavLink>
+          </SidebarGroup>
         </template>
 
-        <AdminNavLink v-if="isAdmin || isSecretaire"   :href="route('admin.reunions.index')"    :icon="ClipboardIcon"              @click="sidebarOpen = false">Réunions</AdminNavLink>
-        <AdminNavLink v-if="isAdmin || isTresorier"    :href="route('admin.cotisations.index')"  :icon="ClipboardDocumentListIcon"  @click="sidebarOpen = false">Cotisations</AdminNavLink>
-        <AdminNavLink v-if="isAdmin || isTresorier"    :href="route('admin.depenses.index')"      :icon="ArrowTrendingDownIcon"       @click="sidebarOpen = false">Dépenses</AdminNavLink>
-        <AdminNavLink v-if="isAdmin || isGestionnaire" :href="route('admin.materiels.index')"    :icon="CubeIcon"                   @click="sidebarOpen = false">Matériels</AdminNavLink>
-        <AdminNavLink v-if="isAdmin || isGestionnaire" :href="route('admin.emprunts.index')"     :icon="ArrowsRightLeftIcon"        @click="sidebarOpen = false">Emprunts</AdminNavLink>
-        <AdminNavLink v-if="isAdmin || isGestionnaire" :href="route('admin.maintenances.index')" :icon="WrenchScrewdriverIcon"      @click="sidebarOpen = false">Maintenances</AdminNavLink>
-        <AdminNavLink :href="route('admin.sms.index')" :icon="DevicePhoneMobileIcon"             @click="sidebarOpen = false">SMS</AdminNavLink>
+        <!-- Contenu (admin) -->
+        <template v-if="isAdmin">
+          <SidebarGroup label="Contenu" :icon="FolderOpenIcon" :open="groupOuvert === 'contenu'" @toggle="toggleGroupe('contenu')">
+            <AdminNavLink :href="route('admin.evenements.index')"  :icon="CalendarDaysIcon" @click="sidebarOpen = false" :indent="true">Événements</AdminNavLink>
+            <AdminNavLink :href="route('admin.khassaides.index')"  :icon="MusicalNoteIcon"  @click="sidebarOpen = false" :indent="true">Khassaïdes</AdminNavLink>
+            <AdminNavLink :href="route('admin.albums.index')"      :icon="FolderOpenIcon"   @click="sidebarOpen = false" :indent="true">Albums</AdminNavLink>
+            <AdminNavLink :href="route('admin.galerie.index')"     :icon="PhotoIcon"        @click="sidebarOpen = false" :indent="true">Galerie</AdminNavLink>
+          </SidebarGroup>
+        </template>
+
+        <!-- Réunions (admin + secrétaire) -->
+        <AdminNavLink v-if="isAdmin || isSecretaire" :href="route('admin.reunions.index')" :icon="ClipboardIcon" @click="sidebarOpen = false">
+          Réunions
+        </AdminNavLink>
+
+        <!-- Finances (admin + trésorier) -->
+        <template v-if="isAdmin || isTresorier">
+          <SidebarGroup label="Finances" :icon="BanknotesIcon" :open="groupOuvert === 'finances'" @toggle="toggleGroupe('finances')">
+            <AdminNavLink :href="route('admin.cotisations.index')" :icon="ClipboardDocumentListIcon" @click="sidebarOpen = false" :indent="true">Cotisations</AdminNavLink>
+            <AdminNavLink v-if="isAdmin" :href="route('admin.collections.index')" :icon="BanknotesIcon" @click="sidebarOpen = false" :indent="true">Collectes</AdminNavLink>
+            <AdminNavLink :href="route('admin.depenses.index')" :icon="ArrowTrendingDownIcon" @click="sidebarOpen = false" :indent="true">Dépenses</AdminNavLink>
+          </SidebarGroup>
+        </template>
+
+        <!-- Matériels (admin + gestionnaire) -->
+        <template v-if="isAdmin || isGestionnaire">
+          <SidebarGroup label="Matériels" :icon="CubeIcon" :open="groupOuvert === 'materiels'" @toggle="toggleGroupe('materiels')">
+            <AdminNavLink :href="route('admin.materiels.index')"    :icon="CubeIcon"            @click="sidebarOpen = false" :indent="true">Inventaire</AdminNavLink>
+            <AdminNavLink :href="route('admin.emprunts.index')"     :icon="ArrowsRightLeftIcon"  @click="sidebarOpen = false" :indent="true">Emprunts</AdminNavLink>
+            <AdminNavLink :href="route('admin.maintenances.index')" :icon="WrenchScrewdriverIcon" @click="sidebarOpen = false" :indent="true">Maintenances</AdminNavLink>
+          </SidebarGroup>
+        </template>
+
+        <!-- SMS -->
+        <AdminNavLink :href="route('admin.sms.index')" :icon="DevicePhoneMobileIcon" @click="sidebarOpen = false">SMS</AdminNavLink>
+
       </nav>
 
       <div class="p-4 border-t border-blue-800 space-y-2">
@@ -64,7 +95,6 @@
     <!-- Contenu principal -->
     <div class="lg:ml-64 flex-1 flex flex-col min-h-screen">
       <header class="bg-white shadow-sm px-4 lg:px-8 py-4 flex items-center justify-between sticky top-0 z-30">
-        <!-- Burger mobile -->
         <div class="flex items-center gap-3">
           <button @click="sidebarOpen = true" class="lg:hidden text-gray-500 hover:text-gray-700 p-1">
             <Bars3Icon class="w-6 h-6" />
@@ -95,17 +125,55 @@ import {
   PhotoIcon, BanknotesIcon, ClipboardDocumentListIcon, ArrowLeftIcon,
   ArrowRightOnRectangleIcon, UserCircleIcon, Bars3Icon, XMarkIcon, FolderOpenIcon,
   ClipboardIcon, DevicePhoneMobileIcon, CubeIcon, ArrowsRightLeftIcon, WrenchScrewdriverIcon,
-  ArrowTrendingDownIcon,
+  ArrowTrendingDownIcon, ChevronDownIcon,
 } from '@heroicons/vue/24/outline'
 
 defineProps({ title: { type: String, default: 'Administration' } })
 
 const page = usePage()
-const userRole = computed(() => page.props.auth?.user?.member?.role)
+const userRole       = computed(() => page.props.auth?.user?.member?.role)
 const isAdmin        = computed(() => userRole.value === 'admin')
 const isSecretaire   = computed(() => userRole.value === 'secretaire')
 const isTresorier    = computed(() => userRole.value === 'tresorier')
 const isGestionnaire = computed(() => userRole.value === 'gestionnaire')
+
+// Détecter le groupe actif selon la page courante
+const groupeActif = computed(() => {
+  const c = page.component
+  if (c.startsWith('Admin/Inscriptions') || c.startsWith('Admin/Members')) return 'membres'
+  if (['Admin/Events', 'Admin/Khassaides', 'Admin/Albums', 'Admin/Gallery'].some(p => c.startsWith(p))) return 'contenu'
+  if (['Admin/Cotisations', 'Admin/Collections', 'Admin/Depenses'].some(p => c.startsWith(p))) return 'finances'
+  if (['Admin/Materiels', 'Admin/Emprunts', 'Admin/Maintenances'].some(p => c.startsWith(p))) return 'materiels'
+  return null
+})
+
+const groupOuvert = ref(groupeActif.value)
+
+function toggleGroupe(nom) {
+  groupOuvert.value = groupOuvert.value === nom ? null : nom
+}
+
+// Composant groupe accordéon
+const SidebarGroup = {
+  props: ['label', 'icon', 'open'],
+  emits: ['toggle'],
+  components: { ChevronDownIcon },
+  template: `
+    <div>
+      <button
+        @click="$emit('toggle')"
+        class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition text-blue-200 hover:bg-white/10 hover:text-white"
+      >
+        <component :is="icon" class="w-4 h-4 flex-shrink-0" />
+        <span class="flex-1 text-left font-medium">{{ label }}</span>
+        <ChevronDownIcon class="w-3.5 h-3.5 transition-transform duration-200 flex-shrink-0" :class="open ? 'rotate-180' : ''" />
+      </button>
+      <div v-if="open" class="mt-0.5 ml-3 border-l border-blue-700/50 pl-2 space-y-0.5">
+        <slot />
+      </div>
+    </div>
+  `,
+}
 
 const sidebarOpen = ref(false)
 </script>
