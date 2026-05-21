@@ -119,13 +119,14 @@
 import { ref, computed } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import AdminNavLink from '@/Components/AdminNavLink.vue'
+import SidebarGroup from '@/Components/SidebarGroup.vue'
 import Toast from '@/Components/Toast.vue'
 import {
   ChartBarIcon, UsersIcon, UserPlusIcon, CalendarDaysIcon, MusicalNoteIcon,
   PhotoIcon, BanknotesIcon, ClipboardDocumentListIcon, ArrowLeftIcon,
   ArrowRightOnRectangleIcon, UserCircleIcon, Bars3Icon, XMarkIcon, FolderOpenIcon,
   ClipboardIcon, DevicePhoneMobileIcon, CubeIcon, ArrowsRightLeftIcon, WrenchScrewdriverIcon,
-  ArrowTrendingDownIcon, ChevronDownIcon,
+  ArrowTrendingDownIcon,
 } from '@heroicons/vue/24/outline'
 
 defineProps({ title: { type: String, default: 'Administration' } })
@@ -151,28 +152,6 @@ const groupOuvert = ref(groupeActif.value)
 
 function toggleGroupe(nom) {
   groupOuvert.value = groupOuvert.value === nom ? null : nom
-}
-
-// Composant groupe accordéon
-const SidebarGroup = {
-  props: ['label', 'icon', 'open'],
-  emits: ['toggle'],
-  components: { ChevronDownIcon },
-  template: `
-    <div>
-      <button
-        @click="$emit('toggle')"
-        class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition text-blue-200 hover:bg-white/10 hover:text-white"
-      >
-        <component :is="icon" class="w-4 h-4 flex-shrink-0" />
-        <span class="flex-1 text-left font-medium">{{ label }}</span>
-        <ChevronDownIcon class="w-3.5 h-3.5 transition-transform duration-200 flex-shrink-0" :class="open ? 'rotate-180' : ''" />
-      </button>
-      <div v-if="open" class="mt-0.5 ml-3 border-l border-blue-700/50 pl-2 space-y-0.5">
-        <slot />
-      </div>
-    </div>
-  `,
 }
 
 const sidebarOpen = ref(false)
