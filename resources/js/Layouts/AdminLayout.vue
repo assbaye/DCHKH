@@ -44,6 +44,7 @@
 
         <AdminNavLink v-if="isAdmin || isSecretaire"   :href="route('admin.reunions.index')"    :icon="ClipboardIcon"              @click="sidebarOpen = false">Réunions</AdminNavLink>
         <AdminNavLink v-if="isAdmin || isTresorier"    :href="route('admin.cotisations.index')"  :icon="ClipboardDocumentListIcon"  @click="sidebarOpen = false">Cotisations</AdminNavLink>
+        <AdminNavLink v-if="isAdmin || isTresorier"    :href="route('admin.depenses.index')"      :icon="ArrowTrendingDownIcon"       @click="sidebarOpen = false">Dépenses</AdminNavLink>
         <AdminNavLink v-if="isAdmin || isGestionnaire" :href="route('admin.materiels.index')"    :icon="CubeIcon"                   @click="sidebarOpen = false">Matériels</AdminNavLink>
         <AdminNavLink v-if="isAdmin || isGestionnaire" :href="route('admin.emprunts.index')"     :icon="ArrowsRightLeftIcon"        @click="sidebarOpen = false">Emprunts</AdminNavLink>
         <AdminNavLink v-if="isAdmin || isGestionnaire" :href="route('admin.maintenances.index')" :icon="WrenchScrewdriverIcon"      @click="sidebarOpen = false">Maintenances</AdminNavLink>
@@ -94,6 +95,7 @@ import {
   PhotoIcon, BanknotesIcon, ClipboardDocumentListIcon, ArrowLeftIcon,
   ArrowRightOnRectangleIcon, UserCircleIcon, Bars3Icon, XMarkIcon, FolderOpenIcon,
   ClipboardIcon, DevicePhoneMobileIcon, CubeIcon, ArrowsRightLeftIcon, WrenchScrewdriverIcon,
+  ArrowTrendingDownIcon,
 } from '@heroicons/vue/24/outline'
 
 defineProps({ title: { type: String, default: 'Administration' } })

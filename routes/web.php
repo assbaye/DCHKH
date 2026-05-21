@@ -70,7 +70,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::middleware('secretaire')->resource('reunions', Admin\ReunionController::class);
 
     // Trésorier + admin
-    Route::middleware('tresorier')->resource('cotisations', Admin\CotisationController::class);
+    Route::middleware('tresorier')->group(function () {
+        Route::resource('cotisations', Admin\CotisationController::class);
+        Route::resource('depenses', Admin\DepenseController::class);
+    });
 
     // SMS — accessible à tous les rôles du panel
     Route::post('sms/envoyer', [Admin\SmsController::class, 'envoyer'])->name('sms.envoyer');

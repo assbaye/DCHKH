@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Collection;
 use App\Models\Cotisation;
+use App\Models\Depense;
 use App\Models\Emprunt;
 use App\Models\Maintenance;
 use App\Models\Materiel;
@@ -77,8 +78,13 @@ class DashboardController extends Controller
     {
         $debutMois = now()->startOfMonth();
 
+        $totalCotisations = Cotisation::sum('montant');
+        $totalDepenses    = Depense::sum('montant');
+
         $stats = [
-            'total_collecte'      => Cotisation::sum('montant'),
+            'total_collecte'      => $totalCotisations,
+            'total_depenses'      => $totalDepenses,
+            'solde'               => $totalCotisations - $totalDepenses,
             'collecte_ce_mois'    => Cotisation::where('date_paiement', '>=', $debutMois)->sum('montant'),
             'nb_cotisants'        => Cotisation::distinct('member_id')->count('member_id'),
             'collections_actives' => Collection::where('active', true)->count(),

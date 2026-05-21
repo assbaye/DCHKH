@@ -129,11 +129,27 @@
 
     <!-- ===== TRÉSORIER ===== -->
     <template v-else-if="isTresorier">
+      <!-- Solde -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-2xl shadow-sm p-5">
+          <div class="flex items-center gap-2 mb-2 text-sm text-gray-500"><ArrowTrendingUpIcon class="w-4 h-4 text-green-500" />Total collecté</div>
+          <div class="text-2xl font-bold text-green-600">{{ formatMontant(stats.total_collecte) }}</div>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm p-5">
+          <div class="flex items-center gap-2 mb-2 text-sm text-gray-500"><ArrowTrendingDownIcon class="w-4 h-4 text-red-500" />Total dépenses</div>
+          <div class="text-2xl font-bold text-red-600">{{ formatMontant(stats.total_depenses) }}</div>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm p-5 border-2" :class="stats.solde >= 0 ? 'border-green-200' : 'border-red-200'">
+          <div class="flex items-center gap-2 mb-2 text-sm text-gray-500"><BanknotesIcon class="w-4 h-4" :class="stats.solde >= 0 ? 'text-green-500' : 'text-red-500'" />Solde</div>
+          <div class="text-2xl font-bold" :class="stats.solde >= 0 ? 'text-green-600' : 'text-red-600'">{{ formatMontant(stats.solde) }}</div>
+        </div>
+      </div>
+
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        <StatCard label="Total collecté"     :value="formatMontant(stats.total_collecte)"   :icon="BanknotesIcon"             color="green" />
-        <StatCard label="Ce mois"            :value="formatMontant(stats.collecte_ce_mois)"  :icon="CalendarDaysIcon"          color="blue" />
-        <StatCard label="Cotisants"          :value="stats.nb_cotisants"                     :icon="UsersIcon"                 color="purple" />
-        <StatCard label="Collectes actives"  :value="stats.collections_actives"              :icon="ClipboardDocumentListIcon" color="amber" />
+        <StatCard label="Ce mois"           :value="formatMontant(stats.collecte_ce_mois)"  :icon="CalendarDaysIcon"          color="blue" />
+        <StatCard label="Cotisants"         :value="stats.nb_cotisants"                     :icon="UsersIcon"                 color="purple" />
+        <StatCard label="Collectes actives" :value="stats.collections_actives"              :icon="ClipboardDocumentListIcon" color="amber" />
+        <StatCard label="Dépenses"          :value="formatMontant(stats.total_depenses)"    :icon="ArrowTrendingDownIcon"     color="red" />
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -181,6 +197,8 @@
         <h2 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><BoltIcon class="w-5 h-5 text-yellow-500" />Actions rapides</h2>
         <div class="flex flex-wrap gap-3">
           <Link :href="route('admin.cotisations.create')" class="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition"><BanknotesIcon class="w-4 h-4" />Enregistrer une cotisation</Link>
+          <Link :href="route('admin.depenses.create')" class="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition"><ArrowTrendingDownIcon class="w-4 h-4" />Nouvelle dépense</Link>
+          <Link :href="route('admin.depenses.index')" class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition"><ClipboardDocumentListIcon class="w-4 h-4" />Toutes les dépenses</Link>
           <Link :href="route('admin.cotisations.index')" class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition"><ClipboardDocumentListIcon class="w-4 h-4" />Toutes les cotisations</Link>
           <button @click="smsTresorier = true" class="inline-flex items-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-teal-700 transition"><DevicePhoneMobileIcon class="w-4 h-4" />Rappel cotisation</button>
           <Link :href="route('admin.sms.index')" class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition"><ClockIcon class="w-4 h-4" />Historique SMS</Link>
@@ -276,6 +294,7 @@ import {
   ArrowRightIcon, UserPlusIcon, BoltIcon, ClipboardIcon,
   ClockIcon, CheckCircleIcon, ClipboardDocumentListIcon, DevicePhoneMobileIcon,
   CubeIcon, ArrowsRightLeftIcon, WrenchScrewdriverIcon, ExclamationTriangleIcon,
+  ArrowTrendingDownIcon, ArrowTrendingUpIcon,
 } from '@heroicons/vue/24/outline'
 
 defineProps({
@@ -305,6 +324,7 @@ const colorMap = {
   amber:  { bg: 'bg-amber-50',  text: 'text-amber-600',  icon: 'text-amber-500' },
   purple: { bg: 'bg-purple-50', text: 'text-purple-600', icon: 'text-purple-500' },
   green:  { bg: 'bg-green-50',  text: 'text-green-600',  icon: 'text-green-500' },
+  red:    { bg: 'bg-red-50',    text: 'text-red-600',    icon: 'text-red-500' },
 }
 
 const StatCard = {
