@@ -47,7 +47,7 @@
               </Link>
               <Link v-if="isAdmin" :href="route('admin.dashboard')" class="flex items-center gap-1.5 bg-[#c9973a] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-yellow-600 transition">
                 <Cog6ToothIcon class="w-4 h-4" />
-                <span class="hidden sm:inline">Admin</span>
+                <span class="hidden sm:inline">{{ roleLabel }}</span>
               </Link>
               <Link :href="route('logout')" method="post" as="button" class="hidden md:flex items-center gap-1.5 text-blue-300 text-sm hover:text-white transition">
                 <ArrowRightOnRectangleIcon class="w-5 h-5" />
@@ -169,9 +169,11 @@ import {
 
 const page = usePage()
 const mobileOpen = ref(false)
-const isAdmin = computed(() => {
-  const member = page.props.auth?.user?.member
-  return member && ['admin', 'secretaire', 'tresorier'].includes(member.role)
+const userRole = computed(() => page.props.auth?.user?.member?.role)
+const isAdmin = computed(() => ['admin', 'secretaire', 'tresorier'].includes(userRole.value))
+const roleLabel = computed(() => {
+  const labels = { admin: 'Admin', secretaire: 'Secrétaire', tresorier: 'Trésorier' }
+  return labels[userRole.value] ?? 'Admin'
 })
 
 

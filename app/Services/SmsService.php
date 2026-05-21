@@ -49,10 +49,16 @@ class SmsService
                     $succes++;
                 } else {
                     $echecs++;
+                    \Log::warning('SMS échec', [
+                        'numero'  => $recipient->number,
+                        'status'  => $recipient->status,
+                        'message' => $recipient->statusCode ?? '',
+                    ]);
                 }
             }
         } catch (\Exception $e) {
             $echecs = count($numeros);
+            \Log::error('SMS exception', ['error' => $e->getMessage()]);
         }
 
         SmsLog::create([
