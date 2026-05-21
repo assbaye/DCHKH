@@ -114,8 +114,17 @@
         <div class="flex flex-wrap gap-3">
           <Link :href="route('admin.reunions.create')" class="inline-flex items-center gap-2 bg-[#0d2f6e] text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-900 transition"><ClipboardIcon class="w-4 h-4" />Nouvelle réunion</Link>
           <Link :href="route('admin.reunions.index')" class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition"><ClipboardIcon class="w-4 h-4" />Toutes les réunions</Link>
+          <button @click="smsSecretaire = true" class="inline-flex items-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-teal-700 transition"><DevicePhoneMobileIcon class="w-4 h-4" />Envoyer un SMS</button>
+          <Link :href="route('admin.sms.index')" class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition"><ClockIcon class="w-4 h-4" />Historique SMS</Link>
         </div>
       </div>
+
+      <SmsModal
+        :show="smsSecretaire"
+        type="reunion"
+        placeholder="Ex : La prochaine réunion aura lieu le... Merci de confirmer votre présence."
+        @close="smsSecretaire = false"
+      />
     </template>
 
     <!-- ===== TRÉSORIER ===== -->
@@ -173,8 +182,17 @@
         <div class="flex flex-wrap gap-3">
           <Link :href="route('admin.cotisations.create')" class="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition"><BanknotesIcon class="w-4 h-4" />Enregistrer une cotisation</Link>
           <Link :href="route('admin.cotisations.index')" class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition"><ClipboardDocumentListIcon class="w-4 h-4" />Toutes les cotisations</Link>
+          <button @click="smsTresorier = true" class="inline-flex items-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-teal-700 transition"><DevicePhoneMobileIcon class="w-4 h-4" />Rappel cotisation</button>
+          <Link :href="route('admin.sms.index')" class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition"><ClockIcon class="w-4 h-4" />Historique SMS</Link>
         </div>
       </div>
+
+      <SmsModal
+        :show="smsTresorier"
+        type="cotisation"
+        placeholder="Ex : Rappel : votre cotisation du mois est en attente. Merci de vous en acquitter dès que possible."
+        @close="smsTresorier = false"
+      />
     </template>
 
   </AdminLayout>
@@ -182,12 +200,13 @@
 
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import SmsModal from '@/Components/SmsModal.vue'
 import { Link, usePage } from '@inertiajs/vue3'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import {
   UsersIcon, CalendarDaysIcon, MusicalNoteIcon, BanknotesIcon,
   ArrowRightIcon, UserPlusIcon, BoltIcon, ClipboardIcon,
-  ClockIcon, CheckCircleIcon, ClipboardDocumentListIcon,
+  ClockIcon, CheckCircleIcon, ClipboardDocumentListIcon, DevicePhoneMobileIcon,
 } from '@heroicons/vue/24/outline'
 
 defineProps({
@@ -205,6 +224,9 @@ const userRole     = computed(() => page.props.auth?.user?.member?.role)
 const isAdmin      = computed(() => userRole.value === 'admin')
 const isSecretaire = computed(() => userRole.value === 'secretaire')
 const isTresorier  = computed(() => userRole.value === 'tresorier')
+
+const smsSecretaire = ref(false)
+const smsTresorier  = ref(false)
 
 const colorMap = {
   blue:   { bg: 'bg-blue-50',   text: 'text-blue-600',   icon: 'text-blue-500' },

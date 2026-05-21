@@ -44,6 +44,7 @@
 
         <AdminNavLink v-if="isAdmin || isSecretaire" :href="route('admin.reunions.index')"   :icon="ClipboardIcon"              @click="sidebarOpen = false">Réunions</AdminNavLink>
         <AdminNavLink v-if="isAdmin || isTresorier"  :href="route('admin.cotisations.index')" :icon="ClipboardDocumentListIcon" @click="sidebarOpen = false">Cotisations</AdminNavLink>
+        <AdminNavLink :href="route('admin.sms.index')" :icon="DevicePhoneMobileIcon" @click="sidebarOpen = false">SMS</AdminNavLink>
       </nav>
 
       <div class="p-4 border-t border-blue-800 space-y-2">
@@ -89,7 +90,7 @@ import {
   ChartBarIcon, UsersIcon, UserPlusIcon, CalendarDaysIcon, MusicalNoteIcon,
   PhotoIcon, BanknotesIcon, ClipboardDocumentListIcon, ArrowLeftIcon,
   ArrowRightOnRectangleIcon, UserCircleIcon, Bars3Icon, XMarkIcon, FolderOpenIcon,
-  ClipboardIcon,
+  ClipboardIcon, DevicePhoneMobileIcon,
 } from '@heroicons/vue/24/outline'
 
 defineProps({ title: { type: String, default: 'Administration' } })

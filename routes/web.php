@@ -71,6 +71,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Trésorier + admin
     Route::middleware('tresorier')->resource('cotisations', Admin\CotisationController::class);
+
+    // SMS — accessible à tous les rôles du panel
+    Route::post('sms/envoyer', [Admin\SmsController::class, 'envoyer'])->name('sms.envoyer');
+    Route::get('sms/historique', [Admin\SmsController::class, 'index'])->name('sms.index');
 });
 
 require __DIR__.'/auth.php';
