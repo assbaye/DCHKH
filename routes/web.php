@@ -52,18 +52,25 @@ Route::middleware(['auth', 'admin'])->get('/admin/membres/{member}/carte', [Memb
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [Admin\DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('inscriptions', [AdminInscriptionController::class, 'index'])->name('inscriptions.index');
-    Route::patch('inscriptions/{user}/approuver', [AdminInscriptionController::class, 'approuver'])->name('inscriptions.approuver');
-    Route::delete('inscriptions/{user}/rejeter', [AdminInscriptionController::class, 'rejeter'])->name('inscriptions.rejeter');
+    // Admin uniquement
+    Route::middleware('admin.only')->group(function () {
+        Route::get('inscriptions', [AdminInscriptionController::class, 'index'])->name('inscriptions.index');
+        Route::patch('inscriptions/{user}/approuver', [AdminInscriptionController::class, 'approuver'])->name('inscriptions.approuver');
+        Route::delete('inscriptions/{user}/rejeter', [AdminInscriptionController::class, 'rejeter'])->name('inscriptions.rejeter');
 
-    Route::resource('membres', Admin\MemberController::class);
-    Route::resource('evenements', Admin\EventController::class);
-    Route::resource('khassaides', Admin\KhassaideController::class);
-    Route::resource('galerie', Admin\GalleryController::class);
-    Route::resource('albums', AdminAlbumController::class);
-    Route::resource('reunions', Admin\ReunionController::class);
-    Route::resource('collections', Admin\CollectionController::class);
-    Route::resource('cotisations', Admin\CotisationController::class);
+        Route::resource('membres', Admin\MemberController::class);
+        Route::resource('evenements', Admin\EventController::class);
+        Route::resource('khassaides', Admin\KhassaideController::class);
+        Route::resource('galerie', Admin\GalleryController::class);
+        Route::resource('albums', AdminAlbumController::class);
+        Route::resource('collections', Admin\CollectionController::class);
+    });
+
+    // Secrétaire + admin
+    Route::middleware('secretaire')->resource('reunions', Admin\ReunionController::class);
+
+    // Trésorier + admin
+    Route::middleware('tresorier')->resource('cotisations', Admin\CotisationController::class);
 });
 
 require __DIR__.'/auth.php';

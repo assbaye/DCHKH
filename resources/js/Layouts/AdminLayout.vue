@@ -26,20 +26,24 @@
 
       <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
         <AdminNavLink :href="route('admin.dashboard')" :icon="ChartBarIcon" @click="sidebarOpen = false">Tableau de bord</AdminNavLink>
-        <AdminNavLink :href="route('admin.inscriptions.index')" :icon="UserPlusIcon" @click="sidebarOpen = false">
-          Inscriptions
-          <span v-if="$page.props.nb_inscriptions > 0" class="ml-auto bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none">
-            {{ $page.props.nb_inscriptions }}
-          </span>
-        </AdminNavLink>
-        <AdminNavLink :href="route('admin.membres.index')"     :icon="UsersIcon"                   @click="sidebarOpen = false">Membres</AdminNavLink>
-        <AdminNavLink :href="route('admin.evenements.index')"  :icon="CalendarDaysIcon"            @click="sidebarOpen = false">Événements</AdminNavLink>
-        <AdminNavLink :href="route('admin.khassaides.index')"  :icon="MusicalNoteIcon"             @click="sidebarOpen = false">Khassaïdes</AdminNavLink>
-        <AdminNavLink :href="route('admin.reunions.index')"    :icon="ClipboardIcon"                @click="sidebarOpen = false">Réunions</AdminNavLink>
-        <AdminNavLink :href="route('admin.albums.index')"     :icon="FolderOpenIcon"               @click="sidebarOpen = false">Albums</AdminNavLink>
-        <AdminNavLink :href="route('admin.galerie.index')"     :icon="PhotoIcon"                   @click="sidebarOpen = false">Galerie</AdminNavLink>
-        <AdminNavLink :href="route('admin.collections.index')" :icon="BanknotesIcon"               @click="sidebarOpen = false">Collections</AdminNavLink>
-        <AdminNavLink :href="route('admin.cotisations.index')" :icon="ClipboardDocumentListIcon"   @click="sidebarOpen = false">Cotisations</AdminNavLink>
+
+        <template v-if="isAdmin">
+          <AdminNavLink :href="route('admin.inscriptions.index')" :icon="UserPlusIcon" @click="sidebarOpen = false">
+            Inscriptions
+            <span v-if="$page.props.nb_inscriptions > 0" class="ml-auto bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none">
+              {{ $page.props.nb_inscriptions }}
+            </span>
+          </AdminNavLink>
+          <AdminNavLink :href="route('admin.membres.index')"     :icon="UsersIcon"                 @click="sidebarOpen = false">Membres</AdminNavLink>
+          <AdminNavLink :href="route('admin.evenements.index')"  :icon="CalendarDaysIcon"          @click="sidebarOpen = false">Événements</AdminNavLink>
+          <AdminNavLink :href="route('admin.khassaides.index')"  :icon="MusicalNoteIcon"           @click="sidebarOpen = false">Khassaïdes</AdminNavLink>
+          <AdminNavLink :href="route('admin.albums.index')"      :icon="FolderOpenIcon"            @click="sidebarOpen = false">Albums</AdminNavLink>
+          <AdminNavLink :href="route('admin.galerie.index')"     :icon="PhotoIcon"                 @click="sidebarOpen = false">Galerie</AdminNavLink>
+          <AdminNavLink :href="route('admin.collections.index')" :icon="BanknotesIcon"             @click="sidebarOpen = false">Collections</AdminNavLink>
+        </template>
+
+        <AdminNavLink v-if="isAdmin || isSecretaire" :href="route('admin.reunions.index')"   :icon="ClipboardIcon"              @click="sidebarOpen = false">Réunions</AdminNavLink>
+        <AdminNavLink v-if="isAdmin || isTresorier"  :href="route('admin.cotisations.index')" :icon="ClipboardDocumentListIcon" @click="sidebarOpen = false">Cotisations</AdminNavLink>
       </nav>
 
       <div class="p-4 border-t border-blue-800 space-y-2">
@@ -77,8 +81,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { Link } from '@inertiajs/vue3'
+import { ref, computed } from 'vue'
+import { Link, usePage } from '@inertiajs/vue3'
 import AdminNavLink from '@/Components/AdminNavLink.vue'
 import Toast from '@/Components/Toast.vue'
 import {
@@ -89,6 +93,12 @@ import {
 } from '@heroicons/vue/24/outline'
 
 defineProps({ title: { type: String, default: 'Administration' } })
+
+const page = usePage()
+const userRole = computed(() => page.props.auth?.user?.member?.role)
+const isAdmin      = computed(() => userRole.value === 'admin')
+const isSecretaire = computed(() => userRole.value === 'secretaire')
+const isTresorier  = computed(() => userRole.value === 'tresorier')
 
 const sidebarOpen = ref(false)
 </script>
