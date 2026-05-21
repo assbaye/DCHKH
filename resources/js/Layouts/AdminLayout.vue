@@ -39,7 +39,7 @@
           <AdminNavLink :href="route('admin.khassaides.index')"  :icon="MusicalNoteIcon"           @click="sidebarOpen = false">Khassaïdes</AdminNavLink>
           <AdminNavLink :href="route('admin.albums.index')"      :icon="FolderOpenIcon"            @click="sidebarOpen = false">Albums</AdminNavLink>
           <AdminNavLink :href="route('admin.galerie.index')"     :icon="PhotoIcon"                 @click="sidebarOpen = false">Galerie</AdminNavLink>
-          <AdminNavLink :href="route('admin.collections.index')" :icon="BanknotesIcon"             @click="sidebarOpen = false">Collections</AdminNavLink>
+          <AdminNavLink :href="route('admin.collections.index')" :icon="BanknotesIcon"             @click="sidebarOpen = false">Collectes</AdminNavLink>
         </template>
 
         <AdminNavLink v-if="isAdmin || isSecretaire"   :href="route('admin.reunions.index')"    :icon="ClipboardIcon"              @click="sidebarOpen = false">Réunions</AdminNavLink>
