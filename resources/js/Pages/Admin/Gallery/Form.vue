@@ -87,8 +87,11 @@
           <FormField label="Titre" :error="form.errors.titre">
             <input v-model="form.titre" type="text" class="input" placeholder="Titre (optionnel)" />
           </FormField>
-          <FormField label="Album" :error="form.errors.album">
-            <input v-model="form.album" type="text" class="input" placeholder="Ex: Magal 2025" />
+          <FormField label="Album" :error="form.errors.album_id">
+            <select v-model="form.album_id" class="input">
+              <option value="">— Sans album —</option>
+              <option v-for="a in albums" :key="a.id" :value="a.id">{{ a.nom }}</option>
+            </select>
           </FormField>
         </div>
 
@@ -133,7 +136,7 @@ import { Link, useForm } from '@inertiajs/vue3'
 import { ref } from 'vue'
 import { CheckIcon, PhotoIcon, VideoCameraIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 
-const props = defineProps({ item: Object, events: Array })
+const props = defineProps({ item: Object, events: Array, albums: Array })
 
 const fileInput = ref(null)
 const previews = ref([])
@@ -145,7 +148,7 @@ const form = useForm({
   type:        props.item?.type ?? 'photo',
   fichiers:    [],
   url_video:   props.item?.url_video ?? '',
-  album:       props.item?.album ?? '',
+  album_id:    props.item?.album_id ?? '',
   event_id:    props.item?.event_id ?? '',
   publie:      props.item?.publie ?? true,
 })

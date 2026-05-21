@@ -35,6 +35,7 @@
         <AdminNavLink :href="route('admin.membres.index')"     :icon="UsersIcon"                   @click="sidebarOpen = false">Membres</AdminNavLink>
         <AdminNavLink :href="route('admin.evenements.index')"  :icon="CalendarDaysIcon"            @click="sidebarOpen = false">Événements</AdminNavLink>
         <AdminNavLink :href="route('admin.khassaides.index')"  :icon="MusicalNoteIcon"             @click="sidebarOpen = false">Khassaïdes</AdminNavLink>
+        <AdminNavLink :href="route('admin.albums.index')"     :icon="FolderOpenIcon"               @click="sidebarOpen = false">Albums</AdminNavLink>
         <AdminNavLink :href="route('admin.galerie.index')"     :icon="PhotoIcon"                   @click="sidebarOpen = false">Galerie</AdminNavLink>
         <AdminNavLink :href="route('admin.collections.index')" :icon="BanknotesIcon"               @click="sidebarOpen = false">Collections</AdminNavLink>
         <AdminNavLink :href="route('admin.cotisations.index')" :icon="ClipboardDocumentListIcon"   @click="sidebarOpen = false">Cotisations</AdminNavLink>
@@ -82,7 +83,7 @@ import Toast from '@/Components/Toast.vue'
 import {
   ChartBarIcon, UsersIcon, UserPlusIcon, CalendarDaysIcon, MusicalNoteIcon,
   PhotoIcon, BanknotesIcon, ClipboardDocumentListIcon, ArrowLeftIcon,
-  ArrowRightOnRectangleIcon, UserCircleIcon, Bars3Icon, XMarkIcon,
+  ArrowRightOnRectangleIcon, UserCircleIcon, Bars3Icon, XMarkIcon, FolderOpenIcon,
 } from '@heroicons/vue/24/outline'
 
 defineProps({ title: { type: String, default: 'Administration' } })

@@ -26,7 +26,7 @@
         <div class="p-2">
           <p class="text-xs font-medium text-gray-700 truncate">{{ item.titre || 'Sans titre' }}</p>
           <div class="flex items-center justify-between mt-1">
-            <span class="text-xs text-gray-400">{{ item.album || '—' }}</span>
+            <span class="text-xs text-gray-400">{{ item.album_obj?.nom || '—' }}</span>
             <span class="text-xs px-1.5 py-0.5 rounded" :class="item.type === 'photo' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'">{{ item.type }}</span>
           </div>
         </div>

@@ -2,38 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Album;
 use App\Models\GalleryItem;
 use Illuminate\Http\Request;
 
 class GalleryController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = GalleryItem::publie()->with('event')->orderBy('created_at', 'desc');
+        $albums = Album::publie()
+            ->withCount(['items as photos_count' => fn($q) => $q->where('type', 'photo')->where('publie', true)])
+            ->withCount(['items as videos_count' => fn($q) => $q->where('type', 'video')->where('publie', true)])
+            ->withCount(['items as items_count' => fn($q) => $q->where('publie', true)])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return inertia('Gallery/Index', ['albums' => $albums]);
+    }
+
+    public function show(Request $request, Album $album)
+    {
+        abort_unless($album->publie, 404);
+
+        $query = $album->items()->where('publie', true)->orderBy('created_at', 'desc');
 
         if ($request->type) {
             $query->where('type', $request->type);
         }
 
-        if ($request->album) {
-            $query->where('album', $request->album);
-        }
-
         $items = $query->paginate(24);
-        $albums = GalleryItem::publie()->whereNotNull('album')->distinct()->pluck('album');
 
-        return inertia('Gallery/Index', [
+        return inertia('Gallery/Show', [
+            'album' => $album,
             'items' => $items,
-            'albums' => $albums,
-            'filtre_type' => $request->type,
-            'filtre_album' => $request->album,
         ]);
     }
-
-    public function show(string $id) {}
-    public function create() {}
-    public function store(Request $request) {}
-    public function edit(string $id) {}
-    public function update(Request $request, string $id) {}
-    public function destroy(string $id) {}
 }

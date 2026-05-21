@@ -8,12 +8,17 @@ class GalleryItem extends Model
 {
     protected $fillable = [
         'titre', 'description', 'type', 'fichier',
-        'url_video', 'album', 'event_id', 'publie', 'created_by',
+        'url_video', 'album', 'album_id', 'event_id', 'publie', 'created_by',
     ];
 
     protected $casts = [
         'publie' => 'boolean',
     ];
+
+    public function albumObj()
+    {
+        return $this->belongsTo(Album::class, 'album_id');
+    }
 
     public function event()
     {

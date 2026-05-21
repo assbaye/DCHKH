@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Album;
 use App\Models\Event;
 use App\Models\GalleryItem;
 use Illuminate\Http\Request;
@@ -13,35 +14,36 @@ class GalleryController extends Controller
 {
     public function index()
     {
-        $items = GalleryItem::with('event')->orderBy('created_at', 'desc')->paginate(24);
+        $items = GalleryItem::with(['event', 'albumObj'])->orderBy('created_at', 'desc')->paginate(24);
         return inertia('Admin/Gallery/Index', ['items' => $items]);
     }
 
     public function create()
     {
         $events = Event::orderBy('date_event', 'desc')->get(['id', 'titre']);
-        return inertia('Admin/Gallery/Form', ['events' => $events]);
+        $albums = Album::orderBy('nom')->get(['id', 'nom']);
+        return inertia('Admin/Gallery/Form', ['events' => $events, 'albums' => $albums]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'type'      => 'required|in:photo,video',
-            'fichiers'  => 'nullable|array',
-            'fichiers.*'=> 'image|max:10240',
-            'url_video' => 'nullable|url',
-            'titre'     => 'nullable|string|max:255',
+            'type'       => 'required|in:photo,video',
+            'fichiers'   => 'nullable|array',
+            'fichiers.*' => 'image|max:10240',
+            'url_video'  => 'nullable|url',
+            'titre'      => 'nullable|string|max:255',
             'description'=> 'nullable|string',
-            'album'     => 'nullable|string|max:100',
-            'event_id'  => 'nullable|exists:events,id',
-            'publie'    => 'boolean',
+            'album_id'   => 'nullable|exists:albums,id',
+            'event_id'   => 'nullable|exists:events,id',
+            'publie'     => 'boolean',
         ]);
 
         $base = [
             'type'        => $request->type,
             'titre'       => $request->titre,
             'description' => $request->description,
-            'album'       => $request->album,
+            'album_id'    => $request->album_id ?: null,
             'event_id'    => $request->event_id ?: null,
             'publie'      => $request->boolean('publie', true),
             'created_by'  => auth()->id(),
@@ -68,20 +70,21 @@ class GalleryController extends Controller
     public function edit(GalleryItem $galerie)
     {
         $events = Event::orderBy('date_event', 'desc')->get(['id', 'titre']);
-        return inertia('Admin/Gallery/Form', ['item' => $galerie, 'events' => $events]);
+        $albums = Album::orderBy('nom')->get(['id', 'nom']);
+        return inertia('Admin/Gallery/Form', ['item' => $galerie, 'events' => $events, 'albums' => $albums]);
     }
 
     public function update(Request $request, GalleryItem $galerie)
     {
         $data = $request->validate([
-            'titre'     => 'nullable|string|max:255',
+            'titre'      => 'nullable|string|max:255',
             'description'=> 'nullable|string',
-            'type'      => 'required|in:photo,video',
-            'fichier'   => 'nullable|image|max:5120',
-            'url_video' => 'nullable|url',
-            'album'     => 'nullable|string|max:100',
-            'event_id'  => 'nullable|exists:events,id',
-            'publie'    => 'boolean',
+            'type'       => 'required|in:photo,video',
+            'fichier'    => 'nullable|image|max:5120',
+            'url_video'  => 'nullable|url',
+            'album_id'   => 'nullable|exists:albums,id',
+            'event_id'   => 'nullable|exists:events,id',
+            'publie'     => 'boolean',
         ]);
         if ($request->hasFile('fichiers')) {
             if ($galerie->fichier) Storage::disk('public')->delete($galerie->fichier);

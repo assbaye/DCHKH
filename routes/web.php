@@ -9,6 +9,7 @@ use App\Http\Controllers\CotisationController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\InscriptionController as AdminInscriptionController;
+use App\Http\Controllers\Admin\AlbumController as AdminAlbumController;
 use Illuminate\Support\Facades\Route;
 
 // Page d'attente après inscription
@@ -21,6 +22,7 @@ Route::get('/evenements/{event}', [EventController::class, 'show'])->name('event
 Route::get('/khassaides', [KhassaideController::class, 'index'])->name('khassaides.index');
 Route::get('/khassaides/{khassaide}', [KhassaideController::class, 'show'])->name('khassaides.show');
 Route::get('/galerie', [GalleryController::class, 'index'])->name('gallery.index');
+Route::get('/galerie/{album}', [GalleryController::class, 'show'])->name('gallery.show');
 Route::get('/cotisations', [CotisationController::class, 'index'])->name('cotisations.index');
 
 // Routes membres (authentifiés)
@@ -51,6 +53,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('evenements', Admin\EventController::class);
     Route::resource('khassaides', Admin\KhassaideController::class);
     Route::resource('galerie', Admin\GalleryController::class);
+    Route::resource('albums', AdminAlbumController::class);
     Route::resource('collections', Admin\CollectionController::class);
     Route::resource('cotisations', Admin\CotisationController::class);
 });
