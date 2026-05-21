@@ -68,7 +68,7 @@
       <!-- Pied -->
       <div class="card-footer">
         <span class="text-white/50 text-[6px]">Louga · Sénégal</span>
-        <span class="text-white/70 text-[6px] font-medium">#{{ String(member.id).padStart(4, '0') }}</span>
+        <span class="text-white/70 text-[6px] font-medium">{{ member.matricule ?? '#' + String(member.id).padStart(4, '0') }}</span>
       </div>
     </div>
 

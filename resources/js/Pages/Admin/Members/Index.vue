@@ -40,7 +40,7 @@
                 </div>
                 <div>
                   <div class="font-medium text-gray-800">{{ m.prenom }} {{ m.nom }}</div>
-                  <div v-if="m.user" class="text-xs text-gray-400">{{ m.user.email }}</div>
+                  <div class="text-xs text-[#c9973a] font-medium">{{ m.matricule ?? '—' }}</div>
                 </div>
               </div>
             </td>

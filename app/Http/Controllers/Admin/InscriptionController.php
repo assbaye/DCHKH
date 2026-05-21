@@ -31,6 +31,7 @@ class InscriptionController extends Controller
                 'date_adhesion' => now()->toDateString(),
                 'statut'        => 'actif',
                 'role'          => 'membre',
+                'matricule'     => Member::genererMatricule(),
             ]);
         }
 

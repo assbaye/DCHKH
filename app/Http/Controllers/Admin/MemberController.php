@@ -25,7 +25,10 @@ class MemberController extends Controller
 
     public function create()
     {
-        return inertia('Admin/Members/Form', ['roles' => ['membre', 'secretaire', 'tresorier', 'gestionnaire', 'admin']]);
+        return inertia('Admin/Members/Form', [
+            'roles'             => ['membre', 'secretaire', 'tresorier', 'gestionnaire', 'admin'],
+            'matricule_propose' => Member::genererMatricule(),
+        ]);
     }
 
     public function store(Request $request)
@@ -38,8 +41,14 @@ class MemberController extends Controller
             'ville'         => 'nullable|string|max:100',
             'date_adhesion' => 'required|date',
             'statut'        => 'required|in:actif,inactif',
-            'role'          => 'required|in:membre,secretaire,tresorier,admin',
+            'role'          => 'required|in:membre,secretaire,tresorier,gestionnaire,admin',
+            'matricule'     => 'nullable|string|max:20|unique:members,matricule',
         ]);
+
+        if (empty($data['matricule'])) {
+            $data['matricule'] = Member::genererMatricule();
+        }
+
         Member::create($data);
         return redirect()->route('admin.membres.index')->with('success', 'Membre ajouté avec succès.');
     }
@@ -48,7 +57,10 @@ class MemberController extends Controller
 
     public function edit(Member $membre)
     {
-        return inertia('Admin/Members/Form', ['membre' => $membre, 'roles' => ['membre', 'secretaire', 'tresorier', 'gestionnaire', 'admin']]);
+        return inertia('Admin/Members/Form', [
+            'membre' => $membre,
+            'roles'  => ['membre', 'secretaire', 'tresorier', 'gestionnaire', 'admin'],
+        ]);
     }
 
     public function update(Request $request, Member $membre)
@@ -61,7 +73,8 @@ class MemberController extends Controller
             'ville'         => 'nullable|string|max:100',
             'date_adhesion' => 'required|date',
             'statut'        => 'required|in:actif,inactif',
-            'role'          => 'required|in:membre,secretaire,tresorier,admin',
+            'role'          => 'required|in:membre,secretaire,tresorier,gestionnaire,admin',
+            'matricule'     => 'nullable|string|max:20|unique:members,matricule,' . $membre->id,
         ]);
         $membre->update($data);
         return redirect()->route('admin.membres.index')->with('success', 'Membre mis à jour.');

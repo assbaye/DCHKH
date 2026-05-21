@@ -27,6 +27,13 @@
           <input id="ville" v-model="form.ville" type="text" class="input" placeholder="Ville" />
         </FormField>
 
+        <FormField label="Matricule" id="matricule" :error="form.errors.matricule">
+          <div class="flex gap-2">
+            <input id="matricule" v-model="form.matricule" type="text" class="input" placeholder="DCHKH-0001" />
+            <span class="text-xs text-gray-400 self-center whitespace-nowrap">auto-généré si vide</span>
+          </div>
+        </FormField>
+
         <div class="grid grid-cols-3 gap-4">
           <FormField label="Date d'adhésion" id="date_adhesion" :error="form.errors.date_adhesion" required>
             <input id="date_adhesion" v-model="form.date_adhesion" type="date" required class="input" />
@@ -63,17 +70,18 @@ import FormField from '@/Components/FormField.vue'
 import { Link, useForm } from '@inertiajs/vue3'
 import { CheckIcon } from '@heroicons/vue/24/outline'
 
-const props = defineProps({ membre: Object, roles: Array })
+const props = defineProps({ membre: Object, roles: Array, matricule_propose: String })
 
 const form = useForm({
-  prenom: props.membre?.prenom ?? '',
-  nom: props.membre?.nom ?? '',
-  telephone: props.membre?.telephone ?? '',
-  adresse: props.membre?.adresse ?? '',
-  ville: props.membre?.ville ?? 'Dielerlou Syll',
+  prenom:        props.membre?.prenom ?? '',
+  nom:           props.membre?.nom ?? '',
+  telephone:     props.membre?.telephone ?? '',
+  adresse:       props.membre?.adresse ?? '',
+  ville:         props.membre?.ville ?? 'Dielerlou Syll',
   date_adhesion: props.membre?.date_adhesion?.split('T')[0] ?? new Date().toISOString().split('T')[0],
-  statut: props.membre?.statut ?? 'actif',
-  role: props.membre?.role ?? 'membre',
+  statut:        props.membre?.statut ?? 'actif',
+  role:          props.membre?.role ?? 'membre',
+  matricule:     props.membre?.matricule ?? props.matricule_propose ?? '',
 })
 
 function soumettre() {
